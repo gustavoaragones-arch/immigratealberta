@@ -99,8 +99,17 @@ export async function SiteFooter() {
                 </Link>
               </li>
               <li>
+                <Link
+                  href="/about"
+                  className="text-stone-600 transition-colors hover:text-stone-900"
+                >
+                  About
+                </Link>
+              </li>
+              <li>
+                {/* TODO: confirm preferred contact email before launch */}
                 <a
-                  href="mailto:flag@immigratealberta.ca"
+                  href="mailto:hello@albordigital.ca"
                   className="text-stone-600 transition-colors hover:text-stone-900"
                 >
                   Report a problem
@@ -114,26 +123,47 @@ export async function SiteFooter() {
                   Privacy
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="text-stone-600 transition-colors hover:text-stone-900"
+                >
+                  Terms
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
-        <div className="mt-8 flex flex-col items-start justify-between gap-3 border-t border-stone-200 pt-5 md:flex-row md:items-center">
-          <p className="max-w-md text-[11px] leading-relaxed text-stone-500">
-            Not affiliated with the Government of Canada or the College of
-            Immigration and Citizenship Consultants.
-          </p>
-          {stats.lastChecked && (
-            <div className="inline-flex items-center gap-1.5 text-[11px] text-stone-600">
-              <span className="relative inline-flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-700 opacity-60" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-red-700" />
-              </span>
-              <span>
-                {stats.count} RCICs · last checked{" "}
-                {formatDate(stats.lastChecked)}
-              </span>
-            </div>
-          )}
+        <div className="mt-8 border-t border-stone-200 pt-5">
+          <div className="flex flex-col items-start justify-between gap-3 md:flex-row md:items-center">
+            <p className="max-w-md text-[11px] leading-relaxed text-stone-500">
+              Not affiliated with the Government of Canada or the College of
+              Immigration and Citizenship Consultants.
+            </p>
+            {stats.lastChecked && (
+              <div className="inline-flex items-center gap-1.5 text-[11px] text-stone-600">
+                <span className="relative inline-flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-700 opacity-60" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-red-700" />
+                </span>
+                <span>
+                  {stats.count} RCICs · last checked{" "}
+                  {formatDate(stats.lastChecked)}
+                </span>
+              </div>
+            )}
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-stone-500">
+            <span>© {new Date().getFullYear()} Albor Digital</span>
+            <span className="text-stone-300">·</span>
+            <span>An independent Alberta-registered directory</span>
+            <span className="text-stone-300">·</span>
+            <Link href="/privacy" className="hover:text-stone-700">Privacy</Link>
+            <span className="text-stone-300">·</span>
+            <Link href="/terms" className="hover:text-stone-700">Terms</Link>
+            <span className="text-stone-300">·</span>
+            <Link href="/about" className="hover:text-stone-700">About</Link>
+          </div>
         </div>
       </div>
     </footer>
