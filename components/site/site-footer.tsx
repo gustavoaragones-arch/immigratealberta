@@ -36,7 +36,7 @@ export async function SiteFooter() {
   return (
     <footer className="border-t border-stone-200 bg-white">
       <div className="mx-auto max-w-5xl px-4 py-10">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-[1.6fr,1fr,1fr] md:gap-10">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-[1.4fr,1fr,1fr,1fr] md:gap-8">
           <div>
             <div className="mb-2 flex items-center gap-2">
               <span
@@ -137,6 +137,21 @@ export async function SiteFooter() {
                   className="text-stone-600 transition-colors hover:text-stone-900"
                 >
                   Terms
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <div className="mb-2 text-[11px] font-medium uppercase tracking-wider text-stone-500">
+              Consultants
+            </div>
+            <ul className="space-y-1.5 text-[12px]">
+              <li>
+                <Link
+                  href="/for-consultants"
+                  className="text-stone-600 transition-colors hover:text-stone-900"
+                >
+                  List or correct your firm
                 </Link>
               </li>
             </ul>

@@ -4,10 +4,10 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Briefcase,
+  GraduationCap,
   HelpCircle,
-  IdCard,
   Scale,
-  School,
+  Stamp,
   Users,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -20,27 +20,35 @@ type Tile = {
 
 const tiles: Tile[] = [
   {
-    icon: IdCard,
+    icon: Stamp,
     label: "PR or Express Entry",
-    href: "/calgary/pr-express-entry-consultants",
+    href: "/decision-tool/city?case=pr-express-entry",
   },
-  { icon: School, label: "Study permit", href: "/calgary/study-permit-consultants" },
+  {
+    icon: GraduationCap,
+    label: "Study permit",
+    href: "/decision-tool/city?case=study-permit",
+  },
   {
     icon: Briefcase,
     label: "Work permit or LMIA",
-    href: "/calgary/work-permit-lmia-consultants",
+    href: "/decision-tool/city?case=work-permit-lmia",
   },
   {
     icon: Users,
     label: "Family sponsorship",
-    href: "/calgary/family-sponsorship-consultants",
+    href: "/decision-tool/city?case=family-sponsorship",
   },
   {
     icon: Scale,
     label: "Refugee or IRB matter",
-    href: "/calgary/refugee-irb-consultants",
+    href: "/decision-tool/city?case=refugee-irb",
   },
-  { icon: HelpCircle, label: "I'm not sure yet", href: "/calgary" },
+  {
+    icon: HelpCircle,
+    label: "I'm not sure yet",
+    href: "/decision-tool/city?case=unsure",
+  },
 ];
 
 const container = {
@@ -61,7 +69,7 @@ export function DecisionToolPreview() {
   return (
     <div className="mx-auto max-w-[600px] rounded-xl border border-stone-300 bg-white p-6 md:p-7">
       <div className="mb-3 text-[11px] font-medium uppercase tracking-wider text-stone-500">
-        Browse by case type · Calgary
+        Find your match · 60 seconds
       </div>
       <div className="mb-5 text-[17px] font-medium text-stone-900">
         What kind of case do you have?
@@ -93,7 +101,7 @@ export function DecisionToolPreview() {
       </motion.div>
 
       <div className="mt-4 text-center text-xs text-stone-500">
-        Showing Calgary first — switch cities anytime via the nav.
+        Next: city, then your matches.
       </div>
     </div>
   );
