@@ -37,6 +37,7 @@ type Props = {
 export const metadata: Metadata = {
   title: "Your matches · ImmigrateAlberta",
   alternates: { canonical: "/decision-tool/results" },
+  robots: { index: false, follow: false },
 };
 
 async function fetchConsultants({
