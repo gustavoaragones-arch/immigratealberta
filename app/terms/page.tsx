@@ -308,10 +308,10 @@ export default function TermsPage() {
               Alberta, Canada
               <br />
               <a
-                href="mailto:hello@albordigital.ca"
+                href="mailto:contact@immigratealberta.ca"
                 className="text-slate-700 underline underline-offset-2 hover:text-slate-900"
               >
-                hello@albordigital.ca
+                contact@immigratealberta.ca
               </a>
               {/* TODO: confirm preferred legal contact email and whether a mailing address is required */}
             </p>

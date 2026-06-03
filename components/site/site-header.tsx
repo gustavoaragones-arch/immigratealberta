@@ -39,6 +39,12 @@ export function SiteHeader() {
             Red Deer
           </Link>
           <Link
+            href="/lethbridge"
+            className="hidden transition-colors hover:text-stone-900 lg:inline"
+          >
+            Lethbridge
+          </Link>
+          <Link
             href="/how-we-verify"
             className="hidden transition-colors hover:text-stone-900 md:inline"
           >

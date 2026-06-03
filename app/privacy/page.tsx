@@ -44,10 +44,10 @@ export default function PrivacyPage() {
               Albor Digital is the data controller for any personal information
               collected through this site. You can reach us at{" "}
               <a
-                href="mailto:hello@albordigital.ca"
+                href="mailto:contact@immigratealberta.ca"
                 className="text-slate-700 underline underline-offset-2 hover:text-slate-900"
               >
-                hello@albordigital.ca
+                contact@immigratealberta.ca
               </a>
               .{/* TODO: confirm preferred privacy contact email */}
             </p>
@@ -110,10 +110,10 @@ export default function PrivacyPage() {
               individual data is. Consultants who wish to request corrections or
               removal may contact us at{" "}
               <a
-                href="mailto:hello@albordigital.ca"
+                href="mailto:contact@immigratealberta.ca"
                 className="text-slate-700 underline underline-offset-2 hover:text-slate-900"
               >
-                hello@albordigital.ca
+                contact@immigratealberta.ca
               </a>
               .
             </p>
@@ -221,10 +221,10 @@ export default function PrivacyPage() {
                 retained indefinitely for the purpose of operating the
                 directory. Consultants may request removal by contacting{" "}
                 <a
-                  href="mailto:hello@albordigital.ca"
+                  href="mailto:contact@immigratealberta.ca"
                   className="text-slate-700 underline underline-offset-2 hover:text-slate-900"
                 >
-                  hello@albordigital.ca
+                  contact@immigratealberta.ca
                 </a>
                 .
               </li>
@@ -284,10 +284,10 @@ export default function PrivacyPage() {
             <p className="mt-3">
               To exercise any of these rights, email us at{" "}
               <a
-                href="mailto:hello@albordigital.ca"
+                href="mailto:contact@immigratealberta.ca"
                 className="text-slate-700 underline underline-offset-2 hover:text-slate-900"
               >
-                hello@albordigital.ca
+                contact@immigratealberta.ca
               </a>
               . We will respond within 30 days.
             </p>
@@ -319,10 +319,10 @@ export default function PrivacyPage() {
               Alberta, Canada
               <br />
               <a
-                href="mailto:hello@albordigital.ca"
+                href="mailto:contact@immigratealberta.ca"
                 className="text-slate-700 underline underline-offset-2 hover:text-slate-900"
               >
-                hello@albordigital.ca
+                contact@immigratealberta.ca
               </a>
               {/* TODO: add mailing address if required for PIPEDA compliance */}
             </p>

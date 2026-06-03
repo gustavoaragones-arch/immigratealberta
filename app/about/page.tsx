@@ -120,10 +120,10 @@ export default function AboutPage() {
             <p>
               Questions, corrections, or concerns:{" "}
               <a
-                href="mailto:hello@albordigital.ca"
+                href="mailto:contact@immigratealberta.ca"
                 className="text-slate-700 underline underline-offset-2 hover:text-slate-900"
               >
-                hello@albordigital.ca
+                contact@immigratealberta.ca
               </a>
               {/* TODO: confirm preferred contact email before launch */}
             </p>

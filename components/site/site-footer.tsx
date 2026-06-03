@@ -109,7 +109,7 @@ export async function SiteFooter() {
               <li>
                 {/* TODO: confirm preferred contact email before launch */}
                 <a
-                  href="mailto:hello@albordigital.ca"
+                  href="mailto:contact@immigratealberta.ca"
                   className="text-stone-600 transition-colors hover:text-stone-900"
                 >
                   Report a problem
