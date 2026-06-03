@@ -22,25 +22,25 @@ const tiles: Tile[] = [
   {
     icon: IdCard,
     label: "PR or Express Entry",
-    href: "/decision-tool?case=pr",
+    href: "/calgary/pr-express-entry-consultants",
   },
-  { icon: School, label: "Study permit", href: "/decision-tool?case=study" },
+  { icon: School, label: "Study permit", href: "/calgary/study-permit-consultants" },
   {
     icon: Briefcase,
     label: "Work permit or LMIA",
-    href: "/decision-tool?case=work",
+    href: "/calgary/work-permit-lmia-consultants",
   },
   {
     icon: Users,
     label: "Family sponsorship",
-    href: "/decision-tool?case=family",
+    href: "/calgary/family-sponsorship-consultants",
   },
   {
     icon: Scale,
     label: "Refugee or IRB matter",
-    href: "/decision-tool?case=refugee",
+    href: "/calgary/refugee-irb-consultants",
   },
-  { icon: HelpCircle, label: "I'm not sure yet", href: "/decision-tool" },
+  { icon: HelpCircle, label: "I'm not sure yet", href: "/calgary" },
 ];
 
 const container = {
@@ -61,7 +61,7 @@ export function DecisionToolPreview() {
   return (
     <div className="mx-auto max-w-[600px] rounded-xl border border-stone-300 bg-white p-6 md:p-7">
       <div className="mb-3 text-[11px] font-medium uppercase tracking-wider text-stone-500">
-        Find your match · 60 seconds
+        Browse by case type · Calgary
       </div>
       <div className="mb-5 text-[17px] font-medium text-stone-900">
         What kind of case do you have?
@@ -93,7 +93,7 @@ export function DecisionToolPreview() {
       </motion.div>
 
       <div className="mt-4 text-center text-xs text-stone-500">
-        Next: city, language, then your matches.
+        Showing Calgary first — switch cities anytime via the nav.
       </div>
     </div>
   );

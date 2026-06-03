@@ -83,6 +83,14 @@ export async function SiteFooter() {
                   Red Deer
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/lethbridge"
+                  className="text-stone-600 transition-colors hover:text-stone-900"
+                >
+                  Lethbridge
+                </Link>
+              </li>
             </ul>
           </div>
           <div>

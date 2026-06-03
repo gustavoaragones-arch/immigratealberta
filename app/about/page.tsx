@@ -62,7 +62,7 @@ export default function AboutPage() {
               international users.
             </p>
             <p className="mt-3 text-[12px] text-stone-500">
-              Registered trade name · Alberta, Canada · Sole proprietorship
+              Canmore, Alberta
             </p>
           </div>
 
