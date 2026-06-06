@@ -75,6 +75,12 @@ function OfficeCard({ biz }: { biz: Biz }) {
           </a>
         )}
       </div>
+      {biz.website ? (
+        <p className="mt-2 text-[11px] leading-relaxed text-stone-500">
+          The website link points to a third-party site we don&apos;t control.
+          We can&apos;t guarantee its uptime, security, or current accuracy.
+        </p>
+      ) : null}
     </Card>
   );
 }

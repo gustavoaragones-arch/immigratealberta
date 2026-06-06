@@ -136,7 +136,58 @@ export default function TermsPage() {
 
           <section>
             <h2 className="mb-2 text-[15px] font-medium text-stone-900">
-              5. User conduct
+              5. Links to third-party websites
+            </h2>
+            <p>
+              Many consultant listings include a link to the consultant&apos;s
+              own website. These links are provided for convenience only.
+              ImmigrateAlberta and Albor Digital do not own, control, host, or
+              monitor those websites.
+            </p>
+            <p className="mt-2">
+              We make no representation or warranty about:
+            </p>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-stone-700">
+              <li>The availability or uptime of any third-party website</li>
+              <li>
+                The accuracy, completeness, or currency of information on those
+                sites
+              </li>
+              <li>
+                The security of those sites, including the presence or absence
+                of malware, phishing, or other malicious content
+              </li>
+              <li>Any goods, services, or representations made on those sites</li>
+              <li>
+                The privacy practices of those websites or how they handle your
+                data
+              </li>
+            </ul>
+            <p className="mt-2">
+              Browser security warnings, expired certificates, or other
+              technical issues on third-party websites are outside our control.
+              You access linked websites at your own risk and are responsible
+              for evaluating their safety. We do not receive any compensation
+              for outbound links and inclusion of a link does not constitute
+              endorsement of the website&apos;s content or security posture.
+            </p>
+            <p className="mt-2">
+              If you encounter a consultant website that appears unsafe, has
+              been taken down, or contains information you believe is
+              misleading, please email{" "}
+              <a
+                href="mailto:contact@immigratealberta.ca"
+                className="text-slate-700 underline underline-offset-2 hover:text-slate-900"
+              >
+                contact@immigratealberta.ca
+              </a>{" "}
+              so we can review the listing.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="mb-2 text-[15px] font-medium text-stone-900">
+              6. User conduct
             </h2>
             <p>You agree not to:</p>
             <ul className="mt-2 list-disc space-y-1.5 pl-5">
@@ -170,7 +221,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="mb-2 text-[15px] font-medium text-stone-900">
-              6. Intellectual property
+              7. Intellectual property
             </h2>
             <p>
               The ImmigrateAlberta name, logo, site design, editorial content,
@@ -188,7 +239,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="mb-2 text-[15px] font-medium text-stone-900">
-              7. Disclaimers
+              8. Disclaimers
             </h2>
             <p>
               The Site and all information on it are provided{" "}
@@ -215,7 +266,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="mb-2 text-[15px] font-medium text-stone-900">
-              8. Limitation of liability
+              9. Limitation of liability
             </h2>
             <p>
               To the maximum extent permitted by applicable law, Albor Digital
@@ -237,7 +288,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="mb-2 text-[15px] font-medium text-stone-900">
-              9. Indemnification
+              10. Indemnification
             </h2>
             <p>
               You agree to indemnify, defend, and hold harmless Albor Digital
@@ -256,7 +307,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="mb-2 text-[15px] font-medium text-stone-900">
-              10. Termination
+              11. Termination
             </h2>
             <p>
               We reserve the right to suspend or terminate access to the Site
@@ -269,7 +320,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="mb-2 text-[15px] font-medium text-stone-900">
-              11. Governing law and jurisdiction
+              12. Governing law and jurisdiction
             </h2>
             <p>
               These Terms are governed by and construed in accordance with the
@@ -286,7 +337,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="mb-2 text-[15px] font-medium text-stone-900">
-              12. Changes to these terms
+              13. Changes to these terms
             </h2>
             <p>
               We may update these Terms from time to time. When we do, we will
@@ -299,7 +350,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="mb-2 text-[15px] font-medium text-stone-900">
-              13. Contact
+              14. Contact
             </h2>
             <p>Questions about these Terms:</p>
             <p className="mt-2">
