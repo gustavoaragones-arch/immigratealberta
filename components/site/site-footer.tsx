@@ -91,6 +91,14 @@ export async function SiteFooter() {
                   Lethbridge
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/cochrane"
+                  className="text-stone-600 transition-colors hover:text-stone-900"
+                >
+                  Cochrane
+                </Link>
+              </li>
             </ul>
           </div>
           <div>

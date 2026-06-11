@@ -4,7 +4,7 @@ import { getAllCityServiceCombos } from "@/lib/queries";
 
 const BASE = "https://immigratealberta.ca";
 
-const STATIC_CITY_SLUGS = ["calgary", "edmonton", "red-deer", "lethbridge"];
+const STATIC_CITY_SLUGS = ["calgary", "edmonton", "red-deer", "lethbridge", "cochrane"];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();

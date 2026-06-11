@@ -24,6 +24,7 @@ const VALID_CITIES = new Set([
   "edmonton",
   "red-deer",
   "lethbridge",
+  "cochrane",
   "any",
 ]);
 

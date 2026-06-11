@@ -15,6 +15,7 @@ const cities = [
   { slug: "edmonton",   label: "Edmonton" },
   { slug: "red-deer",   label: "Red Deer" },
   { slug: "lethbridge", label: "Lethbridge" },
+  { slug: "cochrane",   label: "Cochrane" },
   { slug: "any",        label: "Any city in Alberta" },
 ];
 

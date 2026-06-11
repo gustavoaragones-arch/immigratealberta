@@ -45,6 +45,12 @@ export function SiteHeader() {
             Lethbridge
           </Link>
           <Link
+            href="/cochrane"
+            className="hidden transition-colors hover:text-stone-900 xl:inline"
+          >
+            Cochrane
+          </Link>
+          <Link
             href="/how-we-verify"
             className="hidden transition-colors hover:text-stone-900 md:inline"
           >
