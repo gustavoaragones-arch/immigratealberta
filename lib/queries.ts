@@ -270,10 +270,7 @@ export async function getCity(slug: string) {
 }
 
 export async function getAllCitySlugs(): Promise<string[]> {
-  const { data } = await supabase
-    .from("cities")
-    .select("slug")
-    .eq("is_active", true);
+  const { data } = await supabase.from("cities").select("slug");
   return (data ?? []).map((c) => c.slug);
 }
 
@@ -387,10 +384,7 @@ export async function getAllCityServiceCombos(): Promise<
   { city: string; serviceUrlSlug: string }[]
 > {
   const services = await getFilterableServices();
-  const { data: cities } = await supabase
-    .from("cities")
-    .select("slug")
-    .eq("is_active", true);
+  const { data: cities } = await supabase.from("cities").select("slug");
   if (!cities) return [];
 
   const combos: { city: string; serviceUrlSlug: string }[] = [];
