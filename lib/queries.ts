@@ -110,63 +110,148 @@ export async function getAllConsultantSlugs(): Promise<string[]> {
   return (data ?? []).map((c) => c.slug);
 }
 
+type ConsultantListRow = Pick<
+  Consultant,
+  | "id"
+  | "rcic_number"
+  | "slug"
+  | "full_name"
+  | "primary_city_slug"
+  | "language_codes"
+  | "service_slugs"
+>;
+
+type BusinessCardFields = NonNullable<ConsultantCardData["primary_business"]>;
+
+function unwrapRelation<T>(value: T | T[] | null): T | null {
+  if (value == null) return null;
+  return Array.isArray(value) ? (value[0] ?? null) : value;
+}
+
+function toCardData(
+  row: ConsultantListRow,
+  business: BusinessCardFields | null,
+): ConsultantCardData {
+  return {
+    ...row,
+    language_codes: row.language_codes ?? [],
+    service_slugs: row.service_slugs ?? [],
+    primary_business: business,
+  };
+}
+
+export type ConsultantsByCityResult = {
+  consultants: ConsultantCardData[];
+  secondaryIds: Set<string>;
+  primaryCityNames: Record<string, string>;
+};
+
 export async function getConsultantsByCity(
   citySlug: string,
-): Promise<ConsultantCardData[]> {
-  const { data: consultants } = await supabase
+): Promise<ConsultantsByCityResult> {
+  const consultantSelect =
+    "id, rcic_number, slug, full_name, primary_city_slug, language_codes, service_slugs";
+
+  const { data: primary } = await supabase
     .from("consultants")
-    .select(
-      "id, rcic_number, slug, full_name, primary_city_slug, language_codes, service_slugs",
-    )
-    .eq("status", "published")
+    .select(consultantSelect)
     .eq("primary_city_slug", citySlug)
+    .eq("status", "published")
     .order("full_name", { ascending: true });
 
-  if (!consultants || consultants.length === 0) return [];
-
-  const consultantIds = consultants.map((c) => c.id);
-  const { data: links } = await supabase
+  const { data: secondaryLinks } = await supabase
     .from("consultant_businesses")
     .select(
-      "consultant_id, business:businesses(legal_name, display_name, address, phone, website, city_slug)",
+      `consultant:consultants!inner (${consultantSelect}, status),
+       business:businesses!inner (legal_name, display_name, address, phone, website, city_slug)`,
     )
-    .in("consultant_id", consultantIds)
-    .eq("is_primary", true);
+    .eq("business.city_slug", citySlug)
+    .eq("consultant.status", "published");
 
-  const businessByConsultantId = new Map<
+  const primaryRows = (primary ?? []) as ConsultantListRow[];
+
+  const secondaryById = new Map<
     string,
-    ConsultantCardData["primary_business"]
+    { consultant: ConsultantListRow; business: BusinessCardFields }
   >();
-  for (const link of links ?? []) {
+
+  for (const link of secondaryLinks ?? []) {
     const row = link as {
-      consultant_id: string;
-      business:
-        | ConsultantCardData["primary_business"]
-        | ConsultantCardData["primary_business"][]
+      consultant:
+        | (ConsultantListRow & { status: string })
+        | (ConsultantListRow & { status: string })[]
         | null;
+      business: BusinessCardFields | BusinessCardFields[] | null;
     };
-    const biz = Array.isArray(row.business) ? row.business[0] ?? null : row.business;
-    businessByConsultantId.set(row.consultant_id, biz);
+    const consultant = unwrapRelation(row.consultant);
+    const business = unwrapRelation(row.business);
+    if (!consultant || !business) continue;
+    if (consultant.primary_city_slug === citySlug) continue;
+    if (!secondaryById.has(consultant.id)) {
+      secondaryById.set(consultant.id, { consultant, business });
+    }
   }
 
-  return consultants.map((c) => {
-    const row = c as Pick<
-      Consultant,
-      | "id"
-      | "rcic_number"
-      | "slug"
-      | "full_name"
-      | "primary_city_slug"
-      | "language_codes"
-      | "service_slugs"
-    >;
-    return {
-      ...row,
-      language_codes: row.language_codes ?? [],
-      service_slugs: row.service_slugs ?? [],
-      primary_business: businessByConsultantId.get(c.id) ?? null,
-    };
-  });
+  const secondaryConsultants = Array.from(secondaryById.values()).sort((a, b) =>
+    a.consultant.full_name.localeCompare(b.consultant.full_name),
+  );
+
+  const secondaryIds = new Set(
+    secondaryConsultants.map(({ consultant }) => consultant.id),
+  );
+
+  let primaryCityNames: Record<string, string> = {};
+  if (secondaryConsultants.length > 0) {
+    const primaryCitySlugs = Array.from(
+      new Set(
+        secondaryConsultants
+          .map(({ consultant }) => consultant.primary_city_slug)
+          .filter((slug): slug is string => Boolean(slug)),
+      ),
+    );
+    if (primaryCitySlugs.length > 0) {
+      const { data: cityRows } = await supabase
+        .from("cities")
+        .select("slug, name")
+        .in("slug", primaryCitySlugs);
+      primaryCityNames = Object.fromEntries(
+        (cityRows ?? []).map((r) => [r.slug, r.name]),
+      );
+    }
+  }
+
+  const primaryIds = primaryRows.map((c) => c.id);
+  const businessByConsultantId = new Map<string, BusinessCardFields>();
+
+  if (primaryIds.length > 0) {
+    const { data: links } = await supabase
+      .from("consultant_businesses")
+      .select(
+        "consultant_id, business:businesses(legal_name, display_name, address, phone, website, city_slug)",
+      )
+      .in("consultant_id", primaryIds)
+      .eq("is_primary", true);
+
+    for (const link of links ?? []) {
+      const row = link as {
+        consultant_id: string;
+        business: BusinessCardFields | BusinessCardFields[] | null;
+      };
+      const biz = unwrapRelation(row.business);
+      if (biz) businessByConsultantId.set(row.consultant_id, biz);
+    }
+  }
+
+  const consultants = [
+    ...primaryRows.map((c) =>
+      toCardData(c, businessByConsultantId.get(c.id) ?? null),
+    ),
+    ...secondaryConsultants.map(({ consultant, business }) =>
+      toCardData(consultant, business),
+    ),
+  ];
+
+  return { consultants, secondaryIds, primaryCityNames };
 }
 
 export async function getCity(slug: string) {

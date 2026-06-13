@@ -63,11 +63,11 @@ export default async function CityServicePage({ params }: Props) {
   if (!cityRow || !service) notFound();
 
   const filtered = await getConsultantsByCityAndService(city, actualServiceSlug);
-  const fallback =
-    filtered.length === 0 ? await getConsultantsByCity(city) : [];
+  const cityFallback =
+    filtered.length === 0 ? await getConsultantsByCity(city) : null;
 
   const isEmpty = filtered.length === 0;
-  const listToShow = isEmpty ? fallback : filtered;
+  const listToShow = isEmpty ? (cityFallback?.consultants ?? []) : filtered;
 
   return (
     <main className="pb-12">
@@ -111,7 +111,17 @@ export default async function CityServicePage({ params }: Props) {
         ) : (
           <div className="space-y-3">
             {listToShow.map((c) => (
-              <ConsultantCard key={c.id} consultant={c} />
+              <ConsultantCard
+                key={c.id}
+                consultant={c}
+                secondaryNote={
+                  isEmpty && cityFallback?.secondaryIds.has(c.id)
+                    ? (cityFallback.primaryCityNames[c.primary_city_slug ?? ""] ??
+                      c.primary_city_slug ??
+                      undefined)
+                    : undefined
+                }
+              />
             ))}
           </div>
         )}

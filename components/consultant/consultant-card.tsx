@@ -13,8 +13,10 @@ function getInitials(fullName: string): string {
 
 export function ConsultantCard({
   consultant,
+  secondaryNote,
 }: {
   consultant: ConsultantCardData;
+  secondaryNote?: string;
 }) {
   const biz = consultant.primary_business;
   return (
@@ -44,6 +46,11 @@ export function ConsultantCard({
               <span className="font-mono">{consultant.rcic_number}</span>
               {biz && <> · {biz.display_name ?? biz.legal_name}</>}
             </div>
+            {secondaryNote ? (
+              <p className="mt-1 text-[11px] leading-relaxed text-stone-500">
+                Secondary office — primary practice in {secondaryNote}
+              </p>
+            ) : null}
           </div>
         </div>
       </Card>

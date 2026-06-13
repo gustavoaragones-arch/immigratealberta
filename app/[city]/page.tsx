@@ -38,10 +38,8 @@ export default async function CityPage({ params }: Props) {
   const cityRow = await getCity(city);
   if (!cityRow) notFound();
 
-  const [consultants, services] = await Promise.all([
-    getConsultantsByCity(city),
-    getFilterableServices(),
-  ]);
+  const [{ consultants, secondaryIds, primaryCityNames }, services] =
+    await Promise.all([getConsultantsByCity(city), getFilterableServices()]);
 
   return (
     <main className="pb-12">
@@ -72,7 +70,17 @@ export default async function CityPage({ params }: Props) {
         ) : (
           <div className="space-y-3">
             {consultants.map((c) => (
-              <ConsultantCard key={c.id} consultant={c} />
+              <ConsultantCard
+                key={c.id}
+                consultant={c}
+                secondaryNote={
+                  secondaryIds.has(c.id)
+                    ? (primaryCityNames[c.primary_city_slug ?? ""] ??
+                      c.primary_city_slug ??
+                      undefined)
+                    : undefined
+                }
+              />
             ))}
           </div>
         )}
