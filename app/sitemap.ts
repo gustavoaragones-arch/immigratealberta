@@ -1,10 +1,8 @@
 import type { MetadataRoute } from "next";
 import { supabase } from "@/lib/supabase";
-import { getAllCityServiceCombos } from "@/lib/queries";
+import { getAllCityServiceCombos, getAllCitySlugs } from "@/lib/queries";
 
 const BASE = "https://immigratealberta.ca";
-
-const STATIC_CITY_SLUGS = ["calgary", "edmonton", "red-deer", "lethbridge", "cochrane"];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
@@ -50,7 +48,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // ── City index pages ───────────────────────────────────────────────────────
-  const cityPages: MetadataRoute.Sitemap = STATIC_CITY_SLUGS.map((slug) => ({
+  const citySlugs = await getAllCitySlugs();
+  const cityPages: MetadataRoute.Sitemap = citySlugs.map((slug) => ({
     url: `${BASE}/${slug}`,
     lastModified: now,
     changeFrequency: "weekly" as const,
