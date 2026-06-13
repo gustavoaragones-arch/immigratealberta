@@ -3,6 +3,7 @@ import { Inter, Source_Serif_4 } from "next/font/google";
 
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { getNavCities } from "@/lib/nav-cities";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 
@@ -72,11 +73,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cities = await getNavCities();
+
   return (
     <html
       lang="en"
@@ -85,9 +88,9 @@ export default function RootLayout({
       <body
         className={`${inter.className} flex min-h-screen flex-col bg-[#faf9f7] font-sans`}
       >
-        <SiteHeader />
+        <SiteHeader cities={cities} />
         <div className="flex-1">{children}</div>
-        <SiteFooter />
+        <SiteFooter cities={cities} />
       </body>
     </html>
   );

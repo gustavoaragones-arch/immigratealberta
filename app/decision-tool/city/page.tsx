@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { MapPin } from "lucide-react";
+import { getNavCities } from "@/lib/nav-cities";
 import { DecisionToolShell } from "@/components/decision-tool/decision-tool-shell";
 import { CaseTile } from "@/components/decision-tool/case-tile";
 
@@ -9,15 +10,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/decision-tool/city" },
   robots: { index: false, follow: false },
 };
-
-const cities = [
-  { slug: "calgary",    label: "Calgary" },
-  { slug: "edmonton",   label: "Edmonton" },
-  { slug: "red-deer",   label: "Red Deer" },
-  { slug: "lethbridge", label: "Lethbridge" },
-  { slug: "cochrane",   label: "Cochrane" },
-  { slug: "any",        label: "Any city in Alberta" },
-];
 
 const VALID_CASES = new Set([
   "pr-express-entry",
@@ -35,12 +27,18 @@ type Props = {
   searchParams: { case?: string };
 };
 
-export default function CityPage({ searchParams }: Props) {
+export default async function CityPage({ searchParams }: Props) {
   const caseSlug = searchParams.case;
 
   if (!caseSlug || !VALID_CASES.has(caseSlug)) {
     redirect("/decision-tool");
   }
+
+  const dbCities = await getNavCities();
+  const cities = [
+    ...dbCities.map((c) => ({ slug: c.slug, label: c.name })),
+    { slug: "any", label: "Any city in Alberta" },
+  ];
 
   return (
     <DecisionToolShell

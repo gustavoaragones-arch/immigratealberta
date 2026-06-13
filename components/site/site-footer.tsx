@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import type { NavCity } from "@/lib/nav-cities";
 
 async function getFooterStats() {
   const { count } = await supabase
@@ -30,7 +31,11 @@ function formatDate(iso: string): string {
   });
 }
 
-export async function SiteFooter() {
+type Props = {
+  cities: NavCity[];
+};
+
+export async function SiteFooter({ cities }: Props) {
   const stats = await getFooterStats();
 
   return (
@@ -59,46 +64,16 @@ export async function SiteFooter() {
               Cities
             </div>
             <ul className="space-y-1.5 text-[12px]">
-              <li>
-                <Link
-                  href="/calgary"
-                  className="text-stone-600 transition-colors hover:text-stone-900"
-                >
-                  Calgary
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/edmonton"
-                  className="text-stone-600 transition-colors hover:text-stone-900"
-                >
-                  Edmonton
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/red-deer"
-                  className="text-stone-600 transition-colors hover:text-stone-900"
-                >
-                  Red Deer
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/lethbridge"
-                  className="text-stone-600 transition-colors hover:text-stone-900"
-                >
-                  Lethbridge
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/cochrane"
-                  className="text-stone-600 transition-colors hover:text-stone-900"
-                >
-                  Cochrane
-                </Link>
-              </li>
+              {cities.map((city) => (
+                <li key={city.slug}>
+                  <Link
+                    href={`/${city.slug}`}
+                    className="text-stone-600 transition-colors hover:text-stone-900"
+                  >
+                    {city.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
