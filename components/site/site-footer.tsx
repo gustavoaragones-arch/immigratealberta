@@ -98,6 +98,14 @@ export async function SiteFooter({ cities }: Props) {
                 </Link>
               </li>
               <li>
+                <Link
+                  href="/alberta-immigration-lawyers"
+                  className="text-stone-600 transition-colors hover:text-stone-900"
+                >
+                  Looking for a lawyer?
+                </Link>
+              </li>
+              <li>
                 {/* TODO: confirm preferred contact email before launch */}
                 <a
                   href="mailto:contact@immigratealberta.ca"

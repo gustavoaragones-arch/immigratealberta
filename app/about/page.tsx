@@ -113,6 +113,50 @@ export default function AboutPage() {
             </p>
           </div>
 
+          <section className="mt-10">
+            <h2 className="mb-3 text-[18px] font-medium text-stone-900">
+              Consultants and lawyers are two separate professions
+            </h2>
+            <p className="mb-3 text-[14px] leading-relaxed text-stone-700">
+              In Canada, three categories of professionals are authorized by
+              law to represent or advise on immigration matters for
+              compensation: Regulated Canadian Immigration Consultants
+              (RCICs), Regulated International Student Immigration Advisors
+              (RISIAs, limited to student matters), and lawyers or Quebec
+              notaries in good standing with their provincial or territorial
+              law society.
+            </p>
+            <p className="mb-3 text-[14px] leading-relaxed text-stone-700">
+              ImmigrateAlberta.ca covers RCICs only. We verify each listing
+              against the{" "}
+              <a
+                href="https://college-ic.ca/protecting-the-public/find-an-immigration-consultant"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-stone-700 underline underline-offset-2 hover:text-stone-900"
+              >
+                CICC public registry
+              </a>
+              , the federal regulator for immigration consultants. Lawyers are
+              regulated separately by provincial law societies and aren&apos;t
+              in our scope.
+            </p>
+            <p className="text-[14px] leading-relaxed text-stone-700">
+              If you&apos;re looking for an immigration lawyer in Alberta,
+              search the{" "}
+              <a
+                href="https://www.lawsociety.ab.ca/public/findalawyer/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-stone-700 underline underline-offset-2 hover:text-stone-900"
+              >
+                Law Society of Alberta&apos;s Find a Lawyer directory
+              </a>
+              . Like ours, it lists professionals without endorsing them —
+              the research and choice are yours.
+            </p>
+          </section>
+
           <div>
             <h2 className="mb-2 text-[15px] font-medium text-stone-900">
               Contact

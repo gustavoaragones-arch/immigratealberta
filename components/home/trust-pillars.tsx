@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { CircleDollarSign, EyeOff, ShieldCheck } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -73,6 +74,16 @@ export function TrustPillars() {
             );
           })}
         </motion.div>
+        <p className="mt-10 text-center text-[13px] leading-relaxed text-stone-500">
+          Looking for an immigration lawyer instead?{" "}
+          <Link
+            href="/alberta-immigration-lawyers"
+            className="text-stone-700 underline underline-offset-2 hover:text-stone-900"
+          >
+            Lawyers are regulated separately
+          </Link>
+          {" "}— here&apos;s where to find them.
+        </p>
       </div>
     </section>
   );
