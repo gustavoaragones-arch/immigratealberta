@@ -46,35 +46,39 @@ export default async function HomePage() {
   const stats = await getHomeStats();
 
   return (
-    <main>
-      <section className="px-4 pt-16 pb-10 text-center md:pt-20">
-        <HeroPill
-          verifiedCount={stats.verifiedCount}
-          lastCheckedISO={stats.lastCheckedISO}
-        />
-        <h1 className="mx-auto max-w-2xl text-3xl font-medium leading-[1.15] tracking-tight text-stone-900 md:text-[40px]">
-          Find a verified immigration consultant in Alberta.
-        </h1>
-        <p className="mx-auto mt-3 max-w-md text-[15px] leading-relaxed text-stone-600">
-          Every consultant on this directory is manually checked against the CICC
-          public registry. No fees to find one. No fake reviews.
-        </p>
-      </section>
+    <main className="overflow-x-hidden">
+      <div className="relative min-h-[calc(100vw*1453/3360)] overflow-x-hidden bg-[#faf9f7] bg-[url('/background.png')] bg-no-repeat bg-top [background-size:100%_auto]">
+        <div className="relative z-10">
+          <section className="px-4 pt-12 pb-8 text-center sm:pt-16 sm:pb-10 md:pt-20">
+            <HeroPill
+              verifiedCount={stats.verifiedCount}
+              lastCheckedISO={stats.lastCheckedISO}
+            />
+            <h1 className="mx-auto max-w-2xl text-[28px] font-medium leading-[1.15] tracking-tight text-stone-900 sm:text-3xl md:text-[40px]">
+              Find a verified immigration consultant in Alberta.
+            </h1>
+            <p className="mx-auto mt-3 max-w-md px-1 text-[15px] leading-relaxed text-stone-600">
+              Every consultant on this directory is manually checked against the
+              CICC public registry. No fees to find one. No fake reviews.
+            </p>
+          </section>
 
-      <section className="px-4 pb-12">
-        <DecisionToolPreview />
-        <div className="mt-4 text-center">
-          <Link
-            href="/calgary"
-            className="group inline-flex items-center gap-1 text-[13px] text-stone-600 underline underline-offset-[3px] hover:text-stone-900"
-          >
-            Or browse all consultants by city
-            <span className="inline-block transition-transform group-hover:translate-x-0.5">
-              →
-            </span>
-          </Link>
+          <section className="px-4 pb-10 sm:pb-12">
+            <DecisionToolPreview />
+            <div className="mt-4 text-center">
+              <Link
+                href="/calgary"
+                className="group inline-flex items-center gap-1 text-[13px] text-stone-600 underline underline-offset-[3px] hover:text-stone-900"
+              >
+                Or browse all consultants by city
+                <span className="inline-block transition-transform group-hover:translate-x-0.5">
+                  →
+                </span>
+              </Link>
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
 
       <TrustPillars />
     </main>

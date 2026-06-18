@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { NavCity } from "@/lib/nav-cities";
+import { SiteLogo } from "@/components/site/site-logo";
 
 async function getFooterStats() {
   const { count } = await supabase
@@ -43,16 +43,8 @@ export async function SiteFooter({ cities }: Props) {
       <div className="mx-auto max-w-5xl px-4 py-10">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-[1.4fr,1fr,1fr,1fr] md:gap-8">
           <div>
-            <div className="mb-2 flex items-center gap-2">
-              <span
-                className="flex h-5 w-5 items-center justify-center rounded bg-slate-800"
-                aria-hidden="true"
-              >
-                <ShieldCheck className="h-3 w-3 text-white" />
-              </span>
-              <span className="text-[13px] font-medium text-stone-900">
-                ImmigrateAlberta
-              </span>
+            <div className="mb-2">
+              <SiteLogo textClassName="text-[13px] font-medium text-stone-900" />
             </div>
             <p className="text-[12px] leading-relaxed text-stone-600">
               A trust-verified directory of Regulated Canadian Immigration

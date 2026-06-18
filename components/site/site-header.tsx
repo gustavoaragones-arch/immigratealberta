@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
 import type { NavCity } from "@/lib/nav-cities";
+import { SiteLogo } from "@/components/site/site-logo";
 
 type Props = {
   cities: NavCity[];
@@ -9,34 +9,21 @@ type Props = {
 export function SiteHeader({ cities }: Props) {
   return (
     <header className="border-b border-stone-200 bg-white">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3.5">
-        <Link
-          href="/"
-          className="flex items-center gap-2 transition-opacity hover:opacity-80"
-        >
-          <span
-            className="flex h-6 w-6 items-center justify-center rounded-md bg-slate-800"
-            aria-hidden="true"
-          >
-            <ShieldCheck className="h-3.5 w-3.5 text-white" />
-          </span>
-          <span className="text-[15px] font-medium tracking-tight text-stone-900">
-            ImmigrateAlberta
-          </span>
-        </Link>
-        <nav className="flex items-center gap-5 text-[13px] text-stone-600 sm:gap-6">
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-4 py-3.5">
+        <SiteLogo className="shrink-0" />
+        <nav className="flex min-w-0 max-w-[58%] items-center justify-end gap-2.5 overflow-x-auto text-[11px] text-stone-600 [scrollbar-width:none] sm:max-w-none sm:gap-6 sm:text-[13px] [&::-webkit-scrollbar]:hidden">
           {cities.map((city) => (
             <Link
               key={city.slug}
               href={`/${city.slug}`}
-              className="transition-colors hover:text-stone-900"
+              className="shrink-0 whitespace-nowrap transition-colors hover:text-stone-900"
             >
               {city.name}
             </Link>
           ))}
           <Link
             href="/how-we-verify"
-            className="hidden transition-colors hover:text-stone-900 md:inline"
+            className="hidden shrink-0 whitespace-nowrap transition-colors hover:text-stone-900 md:inline"
           >
             How we verify
           </Link>
