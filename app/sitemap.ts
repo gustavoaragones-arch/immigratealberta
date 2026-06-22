@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { supabase } from "@/lib/supabase";
+import { getLanguageCityCombos } from "@/lib/language-filter";
 import { getAllCityServiceCombos, getAllCitySlugs } from "@/lib/queries";
 
 const BASE = "https://immigratealberta.ca";
@@ -26,6 +27,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.5,
+    },
+    {
+      url: `${BASE}/languages`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
     },
     {
       url: `${BASE}/alberta-immigration-lawyers`,
@@ -71,6 +78,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
+  const languageCombos = await getLanguageCityCombos();
+  const languagePages: MetadataRoute.Sitemap = languageCombos.map((c) => ({
+    url: `${BASE}/${c.city_slug}/by-language/${c.lang_code}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
   // ── Consultant profile pages ───────────────────────────────────────────────
   const { data: consultants } = await supabase
     .from("consultants")
@@ -91,6 +106,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticPages,
     ...cityPages,
     ...cityServicePages,
+    ...languagePages,
     ...consultantPages,
   ];
 }

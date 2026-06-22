@@ -83,6 +83,14 @@ export async function SiteFooter({ cities }: Props) {
               </li>
               <li>
                 <Link
+                  href="/languages"
+                  className="text-stone-600 transition-colors hover:text-stone-900"
+                >
+                  Browse by language
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/about"
                   className="text-stone-600 transition-colors hover:text-stone-900"
                 >
