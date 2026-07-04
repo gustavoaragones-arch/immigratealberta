@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   getCity,
   getService,
@@ -10,6 +11,8 @@ import {
 } from "@/lib/queries";
 import { substituteCity } from "@/lib/seo";
 import { canonical } from "@/lib/site";
+import { getLanguageCityCombos, LANGUAGE_LABELS } from "@/lib/language-filter";
+import { SERVICE_LABELS } from "@/lib/service-labels";
 import { ConsultantCard } from "@/components/consultant/consultant-card";
 import { ServiceFilterPills } from "@/components/city/service-filter-pills";
 
@@ -66,9 +69,18 @@ export default async function CityServicePage({ params }: Props) {
   const filtered = await getConsultantsByCityAndService(city, actualServiceSlug);
   const cityFallback =
     filtered.length === 0 ? await getConsultantsByCity(city) : null;
+  const languageCombos = await getLanguageCityCombos();
 
   const isEmpty = filtered.length === 0;
   const listToShow = isEmpty ? (cityFallback?.consultants ?? []) : filtered;
+
+  const otherServices = Object.keys(SERVICE_LABELS).filter(
+    (s) => s !== actualServiceSlug,
+  );
+  const cityLanguages = languageCombos
+    .filter((c) => c.city_slug === city)
+    .sort((a, b) => b.consultant_count - a.consultant_count)
+    .slice(0, 4);
 
   return (
     <main className="pb-12">
@@ -126,6 +138,49 @@ export default async function CityServicePage({ params }: Props) {
             ))}
           </div>
         )}
+
+        <section className="mt-10 border-t border-stone-200 pt-8">
+          <h2 className="mb-4 text-[16px] font-medium text-stone-900">
+            Related searches
+          </h2>
+
+          <div className="mb-5">
+            <h3 className="mb-2 text-[13px] font-medium uppercase tracking-wider text-stone-500">
+              Other services in {cityRow.name}
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {otherServices.map((s) => (
+                <Link
+                  key={s}
+                  href={`/${city}/${s}-consultants`}
+                  className="rounded-full border border-stone-300 bg-white px-3 py-1.5 text-[12px] text-stone-700 transition-colors hover:border-stone-400 hover:bg-stone-50"
+                >
+                  {SERVICE_LABELS[s]}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {cityLanguages.length > 0 && (
+            <div>
+              <h3 className="mb-2 text-[13px] font-medium uppercase tracking-wider text-stone-500">
+                By language in {cityRow.name}
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {cityLanguages.map((cl) => (
+                  <Link
+                    key={cl.lang_code}
+                    href={`/${city}/by-language/${cl.lang_code}`}
+                    className="rounded-full border border-stone-300 bg-white px-3 py-1.5 text-[12px] text-stone-700 transition-colors hover:border-stone-400 hover:bg-stone-50"
+                  >
+                    {LANGUAGE_LABELS[cl.lang_code]}-speaking (
+                    {cl.consultant_count})
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
       </div>
     </main>
   );

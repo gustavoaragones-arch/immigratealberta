@@ -1,10 +1,18 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   getConsultantBySlug,
   getAllConsultantSlugs,
+  getCity,
 } from "@/lib/queries";
 import { canonical } from "@/lib/site";
+import {
+  getLanguageCityCombos,
+  LANGUAGE_LABELS,
+  isFilterableLanguage,
+} from "@/lib/language-filter";
+import { SERVICE_LABELS } from "@/lib/service-labels";
 import { ConsultantHeader } from "@/components/consultant/consultant-header";
 import { ConsultantTrustPanel } from "@/components/consultant/consultant-trust-panel";
 import { ConsultantOffices } from "@/components/consultant/consultant-offices";
@@ -53,6 +61,37 @@ export default async function ConsultantPage({ params }: Props) {
   const consultant = await getConsultantBySlug(slug);
   if (!consultant) notFound();
 
+  const primaryCitySlug = consultant.primary_city_slug;
+  const [cityRow, languageCombos] = await Promise.all([
+    primaryCitySlug ? getCity(primaryCitySlug) : Promise.resolve(null),
+    getLanguageCityCombos(),
+  ]);
+
+  const primaryCityName =
+    cityRow?.name ??
+    (primaryCitySlug
+      ? primaryCitySlug.charAt(0).toUpperCase() + primaryCitySlug.slice(1)
+      : "Alberta");
+
+  const consultantLanguages = (consultant.language_codes ?? []).filter(
+    (l) => l !== "en" && isFilterableLanguage(l),
+  );
+
+  const availableLangPages = primaryCitySlug
+    ? languageCombos
+        .filter(
+          (c) =>
+            c.city_slug === primaryCitySlug &&
+            consultantLanguages.includes(c.lang_code),
+        )
+        .sort((a, b) => b.consultant_count - a.consultant_count)
+        .slice(0, 3)
+    : [];
+
+  const primaryService = (consultant.service_slugs ?? []).find(
+    (s) => s !== "general",
+  );
+
   return (
     <main className="pb-32 md:pb-12">
       <div className="mx-auto max-w-3xl px-4 py-8 md:py-12">
@@ -62,6 +101,56 @@ export default async function ConsultantPage({ params }: Props) {
           <ConsultantServices consultant={consultant} />
           <ConsultantOffices consultant={consultant} />
         </div>
+
+        {primaryCitySlug && (
+          <section className="mt-10 border-t border-stone-200 pt-8">
+            <h2 className="mb-4 text-[16px] font-medium text-stone-900">
+              Related searches
+            </h2>
+
+            <div className="mb-5">
+              <h3 className="mb-2 text-[13px] font-medium uppercase tracking-wider text-stone-500">
+                More consultants in {primaryCityName}
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href={`/${primaryCitySlug}`}
+                  className="rounded-full border border-stone-300 bg-white px-3 py-1.5 text-[12px] text-stone-700 transition-colors hover:border-stone-400 hover:bg-stone-50"
+                >
+                  All consultants in {primaryCityName}
+                </Link>
+                {primaryService && SERVICE_LABELS[primaryService] && (
+                  <Link
+                    href={`/${primaryCitySlug}/${primaryService}-consultants`}
+                    className="rounded-full border border-stone-300 bg-white px-3 py-1.5 text-[12px] text-stone-700 transition-colors hover:border-stone-400 hover:bg-stone-50"
+                  >
+                    {SERVICE_LABELS[primaryService]} in {primaryCityName}
+                  </Link>
+                )}
+              </div>
+            </div>
+
+            {availableLangPages.length > 0 && (
+              <div>
+                <h3 className="mb-2 text-[13px] font-medium uppercase tracking-wider text-stone-500">
+                  Consultants who speak the same languages
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {availableLangPages.map((l) => (
+                    <Link
+                      key={l.lang_code}
+                      href={`/${primaryCitySlug}/by-language/${l.lang_code}`}
+                      className="rounded-full border border-stone-300 bg-white px-3 py-1.5 text-[12px] text-stone-700 transition-colors hover:border-stone-400 hover:bg-stone-50"
+                    >
+                      {LANGUAGE_LABELS[l.lang_code]}-speaking in{" "}
+                      {primaryCityName}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
       </div>
       <ConsultantContactSticky consultant={consultant} />
     </main>
