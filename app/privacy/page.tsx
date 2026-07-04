@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { canonical } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Privacy Policy · ImmigrateAlberta",
   description:
     "Privacy Policy for ImmigrateAlberta, operated by Albor Digital. How we collect, use, and protect information in compliance with Canada's PIPEDA.",
-  alternates: { canonical: "/privacy" },
+  alternates: { canonical: canonical("/privacy") },
 };
 
 const LAST_UPDATED = "May 29, 2026";

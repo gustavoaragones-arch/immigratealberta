@@ -1,12 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowRight, Scale } from "lucide-react";
+import { canonical } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Immigration lawyers in Alberta · ImmigrateAlberta",
   description:
     "Understand when to hire an immigration lawyer instead of a consultant in Alberta, and find Lexpert-ranked Alberta immigration lawyers. ImmigrateAlberta covers RCICs only — this page is informational.",
-  alternates: { canonical: "/alberta-immigration-lawyers" },
+  alternates: { canonical: canonical("/alberta-immigration-lawyers") },
 };
 
 const LEXPERT_LAWYERS = [

@@ -6,6 +6,7 @@ import {
   getAllCitySlugs,
   getFilterableServices,
 } from "@/lib/queries";
+import { canonical } from "@/lib/site";
 import { ConsultantCard } from "@/components/consultant/consultant-card";
 import { ServiceFilterPills } from "@/components/city/service-filter-pills";
 
@@ -29,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description:
       cityRow.seo_description ??
       `Find a verified Regulated Canadian Immigration Consultant in ${cityRow.name}, Alberta.`,
-    alternates: { canonical: `/${city}` },
+    alternates: { canonical: canonical(`/${city}`) },
   };
 }
 

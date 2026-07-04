@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { supabase } from "@/lib/supabase";
+import { canonical } from "@/lib/site";
 import { HeroPill } from "@/components/home/hero-pill";
 import { DecisionToolPreview } from "@/components/home/decision-tool-preview";
 import { TrustPillars } from "@/components/home/trust-pillars";
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://immigratealberta.ca",
   },
-  alternates: { canonical: "/" },
+  alternates: { canonical: canonical("/") },
 };
 
 async function getHomeStats() {

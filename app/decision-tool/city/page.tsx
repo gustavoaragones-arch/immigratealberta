@@ -6,9 +6,10 @@ import { DecisionToolShell } from "@/components/decision-tool/decision-tool-shel
 import { CaseTile } from "@/components/decision-tool/case-tile";
 
 export const metadata: Metadata = {
-  title: "Which city? · ImmigrateAlberta",
-  alternates: { canonical: "/decision-tool/city" },
-  robots: { index: false, follow: false },
+  title: "Choose your city · ImmigrateAlberta decision tool",
+  description:
+    "Step 2 of the decision tool — choose your city to see matched RCICs.",
+  robots: { index: false, follow: true },
 };
 
 const VALID_CASES = new Set([

@@ -1,12 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { EyeOff, Mail, Pencil, Plus } from "lucide-react";
+import { canonical } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "For consultants · ImmigrateAlberta",
   description:
     "Licensed RCICs can request to be added, correct existing information, or remove their listing from ImmigrateAlberta. We verify every change manually against the CICC public registry.",
-  alternates: { canonical: "/for-consultants" },
+  alternates: { canonical: canonical("/for-consultants") },
 };
 
 const CONTACT_EMAIL = "contact@immigratealberta.ca";

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { canonical } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "About · ImmigrateAlberta",
   description:
     "ImmigrateAlberta is an independent directory of verified Regulated Canadian Immigration Consultants in Alberta, operated by Albor Digital.",
-  alternates: { canonical: "/about" },
+  alternates: { canonical: canonical("/about") },
 };
 
 export default function AboutPage() {

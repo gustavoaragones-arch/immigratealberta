@@ -9,6 +9,7 @@ import {
   getAllCityServiceCombos,
 } from "@/lib/queries";
 import { substituteCity } from "@/lib/seo";
+import { canonical } from "@/lib/site";
 import { ConsultantCard } from "@/components/consultant/consultant-card";
 import { ServiceFilterPills } from "@/components/city/service-filter-pills";
 
@@ -46,7 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: { canonical: `/${city}/${serviceSlug}` },
+    alternates: { canonical: canonical(`/${city}/${serviceSlug}`) },
   };
 }
 

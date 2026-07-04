@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { canonical } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Terms of Service · ImmigrateAlberta",
   description:
     "Terms of Service for ImmigrateAlberta, an independent RCIC directory operated by Albor Digital in Alberta, Canada.",
-  alternates: { canonical: "/terms" },
+  alternates: { canonical: canonical("/terms") },
 };
 
 const LAST_UPDATED = "May 29, 2026";

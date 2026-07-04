@@ -11,12 +11,13 @@ import {
 } from "lucide-react";
 import { DecisionToolShell } from "@/components/decision-tool/decision-tool-shell";
 import { CaseTile } from "@/components/decision-tool/case-tile";
+import { canonical } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Find a verified immigration consultant · ImmigrateAlberta",
   description:
     "Answer two quick questions and see the verified RCIC consultants in Alberta who match your case.",
-  alternates: { canonical: "/decision-tool" },
+  alternates: { canonical: canonical("/decision-tool") },
 };
 
 const tiles = [

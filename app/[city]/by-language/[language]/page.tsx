@@ -8,6 +8,7 @@ import {
   isFilterableLanguage,
 } from "@/lib/language-filter";
 import { getCity } from "@/lib/queries";
+import { canonical } from "@/lib/site";
 import { ConsultantCard } from "@/components/consultant/consultant-card";
 
 export async function generateStaticParams() {
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${title} · ImmigrateAlberta`,
     description: `Find RCIC-verified immigration consultants in ${cityRow.name}, Alberta who speak ${label}. Every consultant is manually verified against the CICC public registry — no paid placements, no fake reviews.`,
-    alternates: { canonical: `/${city}/by-language/${language}` },
+    alternates: { canonical: canonical(`/${city}/by-language/${language}`) },
   };
 }
 

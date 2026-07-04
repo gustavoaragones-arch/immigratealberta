@@ -6,12 +6,13 @@ import {
   getLanguageProvinceTotals,
 } from "@/lib/language-filter";
 import { supabase } from "@/lib/supabase";
+import { canonical } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Find an immigration consultant by language · ImmigrateAlberta",
   description:
     "Browse RCIC-verified immigration consultants in Alberta by the language they speak. Find Punjabi, Hindi, Spanish, Tagalog, Arabic, Mandarin, and more.",
-  alternates: { canonical: "/languages" },
+  alternates: { canonical: canonical("/languages") },
 };
 
 export const revalidate = 3600;

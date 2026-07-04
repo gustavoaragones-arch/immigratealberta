@@ -4,6 +4,7 @@ import {
   getConsultantBySlug,
   getAllConsultantSlugs,
 } from "@/lib/queries";
+import { canonical } from "@/lib/site";
 import { ConsultantHeader } from "@/components/consultant/consultant-header";
 import { ConsultantTrustPanel } from "@/components/consultant/consultant-trust-panel";
 import { ConsultantOffices } from "@/components/consultant/consultant-offices";
@@ -40,10 +41,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       type: "profile",
-      url: `https://immigratealberta.ca/consultant/${slug}`,
+      url: canonical(`/consultant/${slug}`),
     },
     twitter: { card: "summary", title, description },
-    alternates: { canonical: `/consultant/${slug}` },
+    alternates: { canonical: canonical(`/consultant/${slug}`) },
   };
 }
 

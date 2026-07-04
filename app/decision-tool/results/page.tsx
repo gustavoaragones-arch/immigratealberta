@@ -39,9 +39,10 @@ type Props = {
 };
 
 export const metadata: Metadata = {
-  title: "Your matches · ImmigrateAlberta",
-  alternates: { canonical: "/decision-tool/results" },
-  robots: { index: false, follow: false },
+  title: "Your matches · ImmigrateAlberta decision tool",
+  description:
+    "Personalized RCIC matches based on your case type and city.",
+  robots: { index: false, follow: true },
 };
 
 async function fetchConsultants({
