@@ -336,12 +336,15 @@ export async function getFilterableServices(): Promise<Service[]> {
  * Same as getConsultantsByCity (primary + secondary offices), but only
  * consultants who offer the given service.
  */
-export async function getConsultantsByCityAndService(
-  citySlug: string,
-  serviceSlug: string,
-): Promise<ConsultantsByCityResult> {
-  return fetchCityConsultants(citySlug, serviceSlug);
-}
+// cache() so generateMetadata (via getServiceMatchCount) and the page body
+// share one query per request.
+export const getConsultantsByCityAndService = cache(
+  async (
+    citySlug: string,
+    serviceSlug: string,
+  ): Promise<ConsultantsByCityResult> =>
+    fetchCityConsultants(citySlug, serviceSlug),
+);
 
 /**
  * Number of consultants a city × service page lists before falling back to
