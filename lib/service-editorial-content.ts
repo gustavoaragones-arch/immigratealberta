@@ -61,31 +61,31 @@ export const SERVICE_EDITORIAL: Record<string, ServiceEditorialContent> = {
 
   "calgary:study-permit": {
     metaDescription:
-      "[PLACEHOLDER — 120-155 char meta description for search snippet.]",
+      "Verified RCICs in Calgary who handle study permits — PAL, proof of funds, PGWP-eligible programs, and study-to-PR planning. CICC-checked, no paid placements.",
     intro:
-      "[PLACEHOLDER — 60-80 words on what study permits are, who needs them, and why the process is more nuanced than it appears (financial documentation, PAL requirements post-2024, DLI verification).]",
+      "A study permit authorizes an international student to study at a Designated Learning Institution (DLI) in Canada. In 2026, IRCC set a national cap of 408,000 study permits and requires most applicants to submit a Provincial Attestation Letter (PAL) — issued by the institution on the student's behalf — as part of the application. Alberta has 32,271 application spaces allocated for PAL/TAL-required study permits in 2026. Consultants help applicants navigate the current rules, prepare financial documentation, and plan pathways beyond graduation.",
     whatToLookFor:
-      "[PLACEHOLDER — 100-150 words on 3-4 practical considerations. Points to include: (1) knowledge of Provincial Attestation Letter (PAL) requirements introduced in 2024; (2) experience with GIC and proof-of-funds documentation; (3) guidance on Post-Graduation Work Permit (PGWP) eligibility at time of study permit application; (4) whether they help with study-to-PR pathway planning.]",
+      "First, confirm the consultant has current knowledge of the 2026 PAL system — the rules changed on January 1, 2026 to exempt master's and doctoral students at public DLIs, and rules like this shift with each annual Ministerial Instruction. Second, ask about experience with proof-of-funds documentation, including acceptable evidence of financial support such as bank statements, tuition payments, scholarships, or a Guaranteed Investment Certificate (GIC). Third, discuss Post-Graduation Work Permit (PGWP) planning up-front — since November 2024, non-degree graduates must complete a program on IRCC's eligible fields-of-study list, and this affects program selection now, not just after graduation. Fourth, ask whether they support extensions, dependent applications, and DLI transfers, since study permit journeys often involve several follow-on filings.",
     cityContext:
-      "[PLACEHOLDER — 80-120 words on Calgary-specific context: presence of major DLIs (U of C, SAIT, Mount Royal, Bow Valley College); typical source countries for Calgary international students; language-matching for South Asian, Chinese, and Filipino student communities.]",
+      "Calgary hosts several DLIs including the University of Calgary, SAIT, Mount Royal University, and Bow Valley College. Alberta's PAL process is handled by the institution: after acceptance, the institution requests the PAL from the province on the student's behalf, with delivery times varying by institution. Calgary's Punjabi, Hindi, Tagalog, and Mandarin-speaking communities are well-represented among students from India, the Philippines, and China — you can filter this directory by language to find a consultant who can walk you through the process in your first language.",
     faqs: [
       {
         question:
-          "Do I need a Provincial Attestation Letter (PAL) to apply for a study permit in Alberta?",
+          "Do I need a Provincial Attestation Letter (PAL) to apply for a study permit in Alberta in 2026?",
         answer:
-          "[PLACEHOLDER — 40-80 words. Explain PAL requirement introduced in 2024 for most study permit applicants outside K-12 and graduate programs.]",
+          "Most new post-secondary study permit applicants need a PAL for 2026. As of January 1, 2026, master's and doctoral students enrolled at public DLIs are exempt, along with primary and secondary students and certain other exempt groups. Alberta's 2026 allocation for PAL/TAL-required applications is 32,271 spaces, and the institution requests the PAL on the student's behalf.",
       },
       {
         question:
-          "What is the difference between a study permit and a student visa?",
+          "How does the Post-Graduation Work Permit field-of-study rule affect my program choice?",
         answer:
-          "[PLACEHOLDER — 40-80 words. Clarify the distinction: study permit authorizes studies, TRV/eTA authorizes entry to Canada.]",
+          "If you applied for your study permit on or after November 1, 2024 and you're pursuing a non-degree program (diploma, certificate, post-graduate certificate), your program must be on IRCC's PGWP-eligible fields-of-study list to qualify for a PGWP after graduation. Degree programs (bachelor's, master's, doctoral) are exempt from this rule. IRCC froze the eligible list for all of 2026, but the list can change in future years — a consultant can help confirm your program's status before you commit.",
       },
       {
         question:
-          "Can my study permit consultant help me plan for permanent residence after graduation?",
+          "Can my study permit consultant also help me plan for permanent residence after graduation?",
         answer:
-          "[PLACEHOLDER — 40-80 words. Explain PGWP-to-CEC-to-PR pathway planning as a service some consultants provide from initial study permit stage.]",
+          "Yes — many Calgary consultants offer pathway planning from the study permit stage forward. One potential route is study permit → PGWP → Canadian work experience → Canadian Experience Class through Express Entry or an Alberta Advantage Immigration Program nomination, depending on eligibility. Discussing this pathway before you enroll helps you choose a program that aligns with both PGWP eligibility and eventual PR options; retrofitting the strategy after graduation is usually harder and more limited.",
       },
     ],
   },
