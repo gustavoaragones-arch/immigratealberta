@@ -4,7 +4,9 @@ import type { Metadata } from "next";
 import {
   getLanguageCityCombos,
   getConsultantsByCityAndLanguage,
+  getLanguageMatchCount,
   LANGUAGE_LABELS,
+  MIN_CONSULTANTS,
   isFilterableLanguage,
 } from "@/lib/language-filter";
 import { getCity } from "@/lib/queries";
@@ -26,7 +28,10 @@ type Props = { params: { city: string; language: string } };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city, language } = params;
   const label = LANGUAGE_LABELS[language];
-  const cityRow = await getCity(city);
+  const [cityRow, matchCount] = await Promise.all([
+    getCity(city),
+    label ? getLanguageMatchCount(city, language) : Promise.resolve(0),
+  ]);
 
   if (!label || !cityRow) return { title: "Not found" };
 
@@ -35,7 +40,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${title} · ImmigrateAlberta`,
     description: `Find RCIC-verified immigration consultants in ${cityRow.name}, Alberta who speak ${label}. Every consultant is manually verified against the CICC public registry — no paid placements, no fake reviews.`,
     alternates: { canonical: canonical(`/${city}/by-language/${language}`) },
-    ...(!cityRow.is_active && { robots: { index: false, follow: true } }),
+    // Inactive city, or too few consultants to be a useful page (same
+    // threshold that decides which language pages are built and linked).
+    ...((!cityRow.is_active || matchCount < MIN_CONSULTANTS) && {
+      robots: { index: false, follow: true },
+    }),
   };
 }
 

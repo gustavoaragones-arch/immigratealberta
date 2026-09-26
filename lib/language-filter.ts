@@ -1,7 +1,8 @@
+import { cache } from "react";
 import { supabase } from "@/lib/supabase";
 import type { ConsultantCardData } from "@/types/database";
 
-const MIN_CONSULTANTS = 3;
+export const MIN_CONSULTANTS = 3;
 
 const FILTERABLE_LANGUAGES: Record<string, string> = {
   pa: "Punjabi",
@@ -183,7 +184,9 @@ function toCardData(
   };
 }
 
-export async function getConsultantsByCityAndLanguage(
+// cache() so generateMetadata (via getLanguageMatchCount) and the page body
+// share one query per request.
+export const getConsultantsByCityAndLanguage = cache(async function (
   citySlug: string,
   langCode: string,
 ): Promise<{
@@ -256,4 +259,20 @@ export async function getConsultantsByCityAndLanguage(
     secondaryIds,
     primaryCityNames,
   };
+});
+
+/**
+ * Number of consultants a city × language page lists. Uses
+ * getConsultantsByCityAndLanguage itself so the count can't drift from what
+ * the page renders.
+ */
+export async function getLanguageMatchCount(
+  citySlug: string,
+  langCode: string,
+): Promise<number> {
+  const { consultants } = await getConsultantsByCityAndLanguage(
+    citySlug,
+    langCode,
+  );
+  return consultants.length;
 }
