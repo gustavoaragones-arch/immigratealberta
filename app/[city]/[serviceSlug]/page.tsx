@@ -8,6 +8,7 @@ import {
   getConsultantsByCityAndService,
   getFilterableServices,
   getAllCityServiceCombos,
+  getServiceMatchCount,
 } from "@/lib/queries";
 import { substituteCity } from "@/lib/seo";
 import { canonical } from "@/lib/site";
@@ -35,9 +36,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const actualServiceSlug = stripConsultantsSuffix(serviceSlug);
   if (!actualServiceSlug) return { title: "Page not found" };
 
-  const [cityRow, service] = await Promise.all([
+  const [cityRow, service, matchCount] = await Promise.all([
     getCity(city),
     getService(actualServiceSlug),
+    getServiceMatchCount(city, actualServiceSlug),
   ]);
   if (!cityRow || !service) return { title: "Page not found" };
 
@@ -56,6 +58,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: { canonical: canonical(`/${city}/${serviceSlug}`) },
+    // Zero matches = page renders the city hub's list; keep it out of the index.
+    ...(matchCount === 0 && { robots: { index: false, follow: true } }),
   };
 }
 

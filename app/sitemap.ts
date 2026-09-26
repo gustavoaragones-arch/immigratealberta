@@ -1,7 +1,11 @@
 import type { MetadataRoute } from "next";
 import { supabase } from "@/lib/supabase";
 import { getLanguageCityCombos } from "@/lib/language-filter";
-import { getAllCityServiceCombos, getAllCitySlugs } from "@/lib/queries";
+import {
+  getAllCityServiceCombos,
+  getAllCitySlugs,
+  getServiceMatchCount,
+} from "@/lib/queries";
 
 const BASE = "https://immigratealberta.ca";
 
@@ -70,7 +74,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // ── City + service filtered pages ─────────────────────────────────────────
-  const combos = await getAllCityServiceCombos();
+  // Zero-match combos are noindexed, so leave them out.
+  const allCombos = await getAllCityServiceCombos();
+  const matchCounts = await Promise.all(
+    allCombos.map((c) =>
+      getServiceMatchCount(c.city, c.serviceUrlSlug.replace(/-consultants$/, "")),
+    ),
+  );
+  const combos = allCombos.filter((_, i) => matchCounts[i] > 0);
   const cityServicePages: MetadataRoute.Sitemap = combos.map((c) => ({
     url: `${BASE}/${c.city}/${c.serviceUrlSlug}`,
     lastModified: now,

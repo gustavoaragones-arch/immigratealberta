@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { supabase } from "./supabase";
 import type {
   Business,
@@ -329,6 +330,22 @@ export async function getConsultantsByCityAndService(
 ): Promise<ConsultantsByCityResult> {
   return fetchCityConsultants(citySlug, serviceSlug);
 }
+
+/**
+ * Number of consultants a city × service page lists before falling back to
+ * the full city list. Uses getConsultantsByCityAndService itself so the
+ * count can never drift from what the page renders. 0 = the page is a
+ * near-duplicate of the city hub and should stay out of the index.
+ */
+export const getServiceMatchCount = cache(
+  async (citySlug: string, serviceSlug: string): Promise<number> => {
+    const { consultants } = await getConsultantsByCityAndService(
+      citySlug,
+      serviceSlug,
+    );
+    return consultants.length;
+  },
+);
 
 /**
  * Look up a single service by slug for SEO metadata + page heading.
