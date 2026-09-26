@@ -1,0 +1,10 @@
+# Database
+- Never write to the production database. Produce SQL files only.
+- Never run `supabase link`, `supabase db push` or `supabase db reset`.
+- Every data-changing migration requires a matching `DRYRUN_` file in
+  `supabase/migrations/` (begin; changes; verification selects; rollback;).
+  See `supabase/README.md`.
+
+# Builds
+- Delete `.next/cache/fetch-cache` before any build used for verification.
+  Otherwise the build can reuse stale Supabase responses.
