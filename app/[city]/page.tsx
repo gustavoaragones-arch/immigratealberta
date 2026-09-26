@@ -33,6 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       cityRow.seo_description ??
       `Find a verified Regulated Canadian Immigration Consultant in ${cityRow.name}, Alberta.`,
     alternates: { canonical: canonical(`/${city}`) },
+    ...(!cityRow.is_active && { robots: { index: false, follow: true } }),
   };
 }
 

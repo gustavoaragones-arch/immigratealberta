@@ -35,6 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${title} · ImmigrateAlberta`,
     description: `Find RCIC-verified immigration consultants in ${cityRow.name}, Alberta who speak ${label}. Every consultant is manually verified against the CICC public registry — no paid placements, no fake reviews.`,
     alternates: { canonical: canonical(`/${city}/by-language/${language}`) },
+    ...(!cityRow.is_active && { robots: { index: false, follow: true } }),
   };
 }
 

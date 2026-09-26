@@ -296,6 +296,18 @@ export async function getAllCitySlugs(): Promise<string[]> {
 }
 
 /**
+ * Cities with is_active = true. Inactive cities still build (their URLs stay
+ * live) but are noindexed and kept out of the sitemap.
+ */
+export async function getActiveCitySlugs(): Promise<string[]> {
+  const { data } = await supabase
+    .from("cities")
+    .select("slug")
+    .eq("is_active", true);
+  return (data ?? []).map((c) => c.slug);
+}
+
+/**
  * Fetch all canonical services (excluding the 'general' default).
  * Used to render the filter pill row.
  */

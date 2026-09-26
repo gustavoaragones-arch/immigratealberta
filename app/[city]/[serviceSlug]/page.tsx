@@ -58,8 +58,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: { canonical: canonical(`/${city}/${serviceSlug}`) },
-    // Zero matches = page renders the city hub's list; keep it out of the index.
-    ...(matchCount === 0 && { robots: { index: false, follow: true } }),
+    // Zero matches = page renders the city hub's list; inactive city = not
+    // ready for search. Either way, keep it out of the index.
+    ...((matchCount === 0 || !cityRow.is_active) && {
+      robots: { index: false, follow: true },
+    }),
   };
 }
 

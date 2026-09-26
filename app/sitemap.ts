@@ -2,12 +2,16 @@ import type { MetadataRoute } from "next";
 import { supabase } from "@/lib/supabase";
 import { getLanguageCityCombos } from "@/lib/language-filter";
 import {
+  getActiveCitySlugs,
   getAllCityServiceCombos,
-  getAllCitySlugs,
   getServiceMatchCount,
 } from "@/lib/queries";
 
 const BASE = "https://immigratealberta.ca";
+
+// Refresh hourly, same as the service pages, so the sitemap and their
+// noindex decisions stay in step.
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
@@ -65,7 +69,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // ── City index pages ───────────────────────────────────────────────────────
-  const citySlugs = await getAllCitySlugs();
+  // Inactive cities are noindexed, so leave out all of their URLs.
+  const citySlugs = await getActiveCitySlugs();
+  const activeCities = new Set(citySlugs);
   const cityPages: MetadataRoute.Sitemap = citySlugs.map((slug) => ({
     url: `${BASE}/${slug}`,
     lastModified: now,
@@ -75,7 +81,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // ── City + service filtered pages ─────────────────────────────────────────
   // Zero-match combos are noindexed, so leave them out.
-  const allCombos = await getAllCityServiceCombos();
+  const allCombos = (await getAllCityServiceCombos()).filter((c) =>
+    activeCities.has(c.city),
+  );
   const matchCounts = await Promise.all(
     allCombos.map((c) =>
       getServiceMatchCount(c.city, c.serviceUrlSlug.replace(/-consultants$/, "")),
@@ -89,7 +97,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const languageCombos = await getLanguageCityCombos();
+  const languageCombos = (await getLanguageCityCombos()).filter((c) =>
+    activeCities.has(c.city_slug),
+  );
   const languagePages: MetadataRoute.Sitemap = languageCombos.map((c) => ({
     url: `${BASE}/${c.city_slug}/by-language/${c.lang_code}`,
     lastModified: now,
