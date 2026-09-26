@@ -13,6 +13,7 @@ import { substituteCity } from "@/lib/seo";
 import { canonical } from "@/lib/site";
 import { getLanguageCityCombos, LANGUAGE_LABELS } from "@/lib/language-filter";
 import { SERVICE_LABELS } from "@/lib/service-labels";
+import { getServiceEditorial } from "@/lib/service-editorial-content";
 import { ConsultantCard } from "@/components/consultant/consultant-card";
 import { ServiceFilterPills } from "@/components/city/service-filter-pills";
 
@@ -43,9 +44,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title =
     substituteCity(service.seo_title, cityRow.name) ||
     `${service.name} consultants in ${cityRow.name}`;
-  const description =
+  const defaultDescription =
     substituteCity(service.seo_description, cityRow.name) ||
     `Find verified RCIC consultants for ${service.name} in ${cityRow.name}, Alberta.`;
+  const editorial = getServiceEditorial(city, actualServiceSlug);
+  const description = editorial
+    ? editorial.metaDescription
+    : defaultDescription;
 
   return {
     title,
@@ -70,6 +75,8 @@ export default async function CityServicePage({ params }: Props) {
   const cityFallback =
     filtered.length === 0 ? await getConsultantsByCity(city) : null;
   const languageCombos = await getLanguageCityCombos();
+
+  const editorial = getServiceEditorial(city, actualServiceSlug);
 
   const isEmpty = filtered.length === 0;
   const listToShow = isEmpty ? (cityFallback?.consultants ?? []) : filtered;
@@ -99,6 +106,12 @@ export default async function CityServicePage({ params }: Props) {
             </p>
           )}
         </div>
+
+        {editorial && (
+          <section className="mb-8 text-[14px] leading-relaxed text-stone-700">
+            <p>{editorial.intro}</p>
+          </section>
+        )}
 
         <ServiceFilterPills
           citySlug={city}
@@ -137,6 +150,62 @@ export default async function CityServicePage({ params }: Props) {
               />
             ))}
           </div>
+        )}
+
+        {editorial && (
+          <>
+            <section className="mt-10 border-t border-stone-200 pt-8">
+              <h2 className="mb-3 text-[18px] font-medium text-stone-900">
+                What to look for in a {service.name} consultant
+              </h2>
+              <p className="text-[14px] leading-relaxed text-stone-700">
+                {editorial.whatToLookFor}
+              </p>
+            </section>
+
+            <section className="mt-8">
+              <h2 className="mb-3 text-[18px] font-medium text-stone-900">
+                {service.name} in {cityRow.name}
+              </h2>
+              <p className="text-[14px] leading-relaxed text-stone-700">
+                {editorial.cityContext}
+              </p>
+            </section>
+
+            {editorial.faqs.length > 0 && (
+              <section className="mt-8">
+                <h2 className="mb-4 text-[18px] font-medium text-stone-900">
+                  Common questions
+                </h2>
+                <dl className="space-y-4">
+                  {editorial.faqs.map((faq) => (
+                    <div key={faq.question}>
+                      <dt className="mb-1 text-[14px] font-medium text-stone-900">
+                        {faq.question}
+                      </dt>
+                      <dd className="text-[14px] leading-relaxed text-stone-700">
+                        {faq.answer}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+                <script
+                  type="application/ld+json"
+                  dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                      "@context": "https://schema.org",
+                      "@type": "FAQPage",
+                      mainEntity: editorial.faqs.map((faq) => ({
+                        "@type": "Question",
+                        name: faq.question,
+                        acceptedAnswer: { "@type": "Answer", text: faq.answer },
+                      })),
+                    }).replace(/</g, "\\u003c"),
+                  }}
+                />
+              </section>
+            )}
+          </>
         )}
 
         <section className="mt-10 border-t border-stone-200 pt-8">
@@ -180,6 +249,18 @@ export default async function CityServicePage({ params }: Props) {
               </div>
             </div>
           )}
+
+          <div className="mt-5">
+            <h3 className="mb-2 text-[13px] font-medium uppercase tracking-wider text-stone-500">
+              Not sure if you need a lawyer?
+            </h3>
+            <Link
+              href="/alberta-immigration-lawyers"
+              className="inline-flex items-center rounded-full border border-stone-300 bg-white px-3 py-1.5 text-[12px] text-stone-700 transition-colors hover:border-stone-400 hover:bg-stone-50"
+            >
+              Immigration lawyers in Alberta →
+            </Link>
+          </div>
         </section>
       </div>
     </main>
