@@ -52,7 +52,6 @@ LANGUAGE_ALIASES = {
     'español': 'es',
     'mandarin': 'zh',
     'filipino': 'tl',
-    'visayan': 'tl',
     'farsi': 'fa',
     'ndebele': 'nd',  # table label is "North Ndebele"
 }
