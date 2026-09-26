@@ -149,15 +149,32 @@ export type ConsultantsByCityResult = {
 export async function getConsultantsByCity(
   citySlug: string,
 ): Promise<ConsultantsByCityResult> {
+  return fetchCityConsultants(citySlug, null);
+}
+
+/**
+ * Consultants with any office (primary or secondary) in the city, optionally
+ * limited to those offering a service. Primary-city consultants first, then
+ * secondary-office consultants, each sorted by name.
+ */
+async function fetchCityConsultants(
+  citySlug: string,
+  serviceSlug: string | null,
+): Promise<ConsultantsByCityResult> {
   const consultantSelect =
     "id, rcic_number, slug, full_name, primary_city_slug, language_codes, service_slugs";
 
-  const { data: primary } = await supabase
+  let primaryQuery = supabase
     .from("consultants")
     .select(consultantSelect)
     .eq("primary_city_slug", citySlug)
-    .eq("status", "published")
-    .order("full_name", { ascending: true });
+    .eq("status", "published");
+  if (serviceSlug) {
+    primaryQuery = primaryQuery.contains("service_slugs", [serviceSlug]);
+  }
+  const { data: primary } = await primaryQuery.order("full_name", {
+    ascending: true,
+  });
 
   const { data: secondaryLinks } = await supabase
     .from("consultant_businesses")
@@ -187,6 +204,9 @@ export async function getConsultantsByCity(
     const business = unwrapRelation(row.business);
     if (!consultant || !business) continue;
     if (consultant.primary_city_slug === citySlug) continue;
+    if (serviceSlug && !(consultant.service_slugs ?? []).includes(serviceSlug)) {
+      continue;
+    }
     if (!secondaryById.has(consultant.id)) {
       secondaryById.set(consultant.id, { consultant, business });
     }
@@ -300,68 +320,14 @@ export async function getFilterableServices(): Promise<Service[]> {
 }
 
 /**
- * Same as getConsultantsByCity, but also filtered by a service slug.
- * Returns an empty array if no consultants match.
+ * Same as getConsultantsByCity (primary + secondary offices), but only
+ * consultants who offer the given service.
  */
 export async function getConsultantsByCityAndService(
   citySlug: string,
   serviceSlug: string,
-): Promise<ConsultantCardData[]> {
-  const { data: consultants } = await supabase
-    .from("consultants")
-    .select(
-      "id, rcic_number, slug, full_name, primary_city_slug, language_codes, service_slugs",
-    )
-    .eq("status", "published")
-    .eq("primary_city_slug", citySlug)
-    .contains("service_slugs", [serviceSlug])
-    .order("full_name", { ascending: true });
-
-  if (!consultants || consultants.length === 0) return [];
-
-  const consultantIds = consultants.map((c) => c.id);
-  const { data: links } = await supabase
-    .from("consultant_businesses")
-    .select(
-      "consultant_id, business:businesses(legal_name, display_name, address, phone, website, city_slug)",
-    )
-    .in("consultant_id", consultantIds)
-    .eq("is_primary", true);
-
-  const businessByConsultantId = new Map<
-    string,
-    ConsultantCardData["primary_business"]
-  >();
-  for (const link of links ?? []) {
-    const row = link as {
-      consultant_id: string;
-      business:
-        | ConsultantCardData["primary_business"]
-        | ConsultantCardData["primary_business"][]
-        | null;
-    };
-    const biz = Array.isArray(row.business) ? row.business[0] ?? null : row.business;
-    businessByConsultantId.set(row.consultant_id, biz);
-  }
-
-  return consultants.map((c) => {
-    const row = c as Pick<
-      Consultant,
-      | "id"
-      | "rcic_number"
-      | "slug"
-      | "full_name"
-      | "primary_city_slug"
-      | "language_codes"
-      | "service_slugs"
-    >;
-    return {
-      ...row,
-      language_codes: row.language_codes ?? [],
-      service_slugs: row.service_slugs ?? [],
-      primary_business: businessByConsultantId.get(c.id) ?? null,
-    };
-  });
+): Promise<ConsultantsByCityResult> {
+  return fetchCityConsultants(citySlug, serviceSlug);
 }
 
 /**

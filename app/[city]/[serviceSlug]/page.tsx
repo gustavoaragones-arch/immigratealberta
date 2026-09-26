@@ -72,14 +72,14 @@ export default async function CityServicePage({ params }: Props) {
   if (!cityRow || !service) notFound();
 
   const filtered = await getConsultantsByCityAndService(city, actualServiceSlug);
-  const cityFallback =
-    filtered.length === 0 ? await getConsultantsByCity(city) : null;
+  const isEmpty = filtered.consultants.length === 0;
+  const cityFallback = isEmpty ? await getConsultantsByCity(city) : null;
+  const shown = cityFallback ?? filtered;
   const languageCombos = await getLanguageCityCombos();
 
   const editorial = getServiceEditorial(city, actualServiceSlug);
 
-  const isEmpty = filtered.length === 0;
-  const listToShow = isEmpty ? (cityFallback?.consultants ?? []) : filtered;
+  const listToShow = shown.consultants;
 
   const otherServices = Object.keys(SERVICE_LABELS).filter(
     (s) => s !== actualServiceSlug,
@@ -101,7 +101,7 @@ export default async function CityServicePage({ params }: Props) {
           </h1>
           {!isEmpty && (
             <p className="mt-2 text-sm text-stone-600">
-              {filtered.length} consultant{filtered.length === 1 ? "" : "s"} · all
+              {listToShow.length} consultant{listToShow.length === 1 ? "" : "s"} · all
               manually verified against the CICC public registry.
             </p>
           )}
@@ -141,8 +141,8 @@ export default async function CityServicePage({ params }: Props) {
                 key={c.id}
                 consultant={c}
                 secondaryNote={
-                  isEmpty && cityFallback?.secondaryIds.has(c.id)
-                    ? (cityFallback.primaryCityNames[c.primary_city_slug ?? ""] ??
+                  shown.secondaryIds.has(c.id)
+                    ? (shown.primaryCityNames[c.primary_city_slug ?? ""] ??
                       c.primary_city_slug ??
                       undefined)
                     : undefined
