@@ -6,19 +6,27 @@ Usage:
     python3 seed_from_csv.py batch_1.csv > 001_batch_1_seed.sql
     # then paste the .sql output into the Supabase SQL editor
 
-    python3 seed_from_csv.py --dry-run batch_1.csv
-    # parse + validate only; emits no SQL and prints, per consultant, what
-    # the import would change versus the live database
+    python3 seed_from_csv.py --merge-languages batch_1.csv > seed.sql
+    # also add CSV languages to existing consultants (union, never removes)
 
-The script never writes to the database itself; it only emits SQL. Valid
-language codes are read from the live Supabase `languages` table at runtime
-(NEXT_PUBLIC_SUPABASE_URL + a key, from the environment or .env.local). Any
-language that isn't a mapped name or a valid code aborts the run before any
-SQL is emitted.
+    python3 seed_from_csv.py --dry-run [--merge-languages] batch_1.csv
+    # parse + validate only; emits no SQL and prints what the import would
+    # change versus the live database
 
-The script is idempotent — re-running with the same CSV is safe because every
-INSERT uses ON CONFLICT DO UPDATE keyed on the natural unique field
-(rcic_number for consultants, place_id for businesses).
+The database is the source of truth; an import never degrades existing data:
+  - Default mode inserts new consultants and businesses only. Existing rows
+    (same rcic_number / google_place_id) get no UPDATE.
+  - --merge-languages sets an existing consultant's language_codes to the
+    union of the database value and the CSV value. Nothing else is updated,
+    and no code is ever removed.
+  - full_name and primary_city_slug are never updated for existing
+    consultants, in any mode.
+
+The script never writes to the database itself; it only emits SQL. Language
+names are matched case-insensitively against the live `languages` table's
+name_en column (plus LANGUAGE_ALIASES), read at runtime via
+NEXT_PUBLIC_SUPABASE_URL + a key from the environment or .env.local. Any
+language that can't be resolved aborts the run before any SQL is emitted.
 
 CSV column order expected (no header row, matching batch_1):
   name, phone, website, street, city, consultant_name, rcic_number,
@@ -37,21 +45,16 @@ import uuid
 from pathlib import Path
 
 # ---------------- Controlled vocab ----------------
-# CSV language name -> code. Every code must exist in the live `languages`
-# table (checked at startup). To support a new language, add its row to the
-# table first, then map its name(s) here.
-LANGUAGE_MAP = {
-    'english': 'en', 'french': 'fr', 'français': 'fr',
-    'spanish': 'es', 'español': 'es',
-    'punjabi': 'pa', 'hindi': 'hi', 'urdu': 'ur',
-    'chinese': 'zh', 'mandarin': 'zh', 'cantonese': 'yue',
-    'arabic': 'ar', 'tagalog': 'tl', 'filipino': 'tl', 'visayan': 'tl',
-    'turkish': 'tr', 'portuguese': 'pt',
-    'vietnamese': 'vi', 'korean': 'ko', 'russian': 'ru',
-    'ukrainian': 'uk', 'persian': 'fa', 'farsi': 'fa',
-    'amharic': 'am', 'somali': 'so',
-    'serbian': 'sr', 'croatian': 'hr', 'gujarati': 'gu', 'yoruba': 'yo',
-    'czech': 'cs', 'slovak': 'sk',
+# Only names that differ from a `languages.name_en` label. Everything else is
+# resolved from the table itself, so a new language needs only a table row.
+LANGUAGE_ALIASES = {
+    'français': 'fr',
+    'español': 'es',
+    'mandarin': 'zh',
+    'filipino': 'tl',
+    'visayan': 'tl',
+    'farsi': 'fa',
+    'ndebele': 'nd',  # table label is "North Ndebele"
 }
 
 CITY_MAP = {
@@ -81,7 +84,7 @@ def load_env():
     key = env.get('SUPABASE_SERVICE_ROLE_KEY') or env.get('NEXT_PUBLIC_SUPABASE_ANON_KEY')
     if not url or not key:
         sys.exit('ABORT: NEXT_PUBLIC_SUPABASE_URL and a Supabase key are required '
-                 '(environment or .env.local) to read valid language codes.')
+                 '(environment or .env.local) to read the languages table.')
     return url.rstrip('/'), key
 
 
@@ -102,18 +105,32 @@ def supabase_get(url, key, table, params):
         offset += page
 
 
-def fetch_valid_language_codes(url, key):
+def fetch_language_lookup(url, key):
+    """
+    Returns (valid_codes, name_to_code). name_to_code holds lower-cased
+    name_en labels plus any alias whose target code exists in the table.
+    """
     try:
-        rows = supabase_get(url, key, 'languages', {'select': 'code'})
+        rows = supabase_get(url, key, 'languages', {'select': 'code,name_en'})
     except Exception as e:  # noqa: BLE001 — any failure means we can't validate
         sys.exit(f'ABORT: could not read the languages table: {e}')
-    codes = {r['code'] for r in rows}
-    if not codes:
-        sys.exit('ABORT: the languages table returned no codes.')
-    stale = sorted({c for c in LANGUAGE_MAP.values() if c not in codes})
-    if stale:
-        sys.exit(f'ABORT: LANGUAGE_MAP uses codes missing from the languages table: {stale}')
-    return codes
+    if not rows:
+        sys.exit('ABORT: the languages table returned no rows.')
+
+    valid_codes = {r['code'] for r in rows}
+    name_to_code = {r['name_en'].strip().lower(): r['code'] for r in rows if r.get('name_en')}
+
+    for alias, code in LANGUAGE_ALIASES.items():
+        if alias in name_to_code and name_to_code[alias] != code:
+            sys.exit(f'ABORT: alias {alias!r} -> {code!r} conflicts with table label '
+                     f'{alias!r} -> {name_to_code[alias]!r}.')
+        if code in valid_codes:
+            name_to_code[alias] = code
+        else:
+            # Leave the alias out; rows using that name then fail validation.
+            print(f'note: alias {alias!r} -> {code!r} inactive '
+                  f'({code!r} is not in the languages table yet)', file=sys.stderr)
+    return valid_codes, name_to_code
 
 
 # ---------------- Helpers ----------------
@@ -150,10 +167,10 @@ def make_business_slug(name, city_slug):
     return f"{slugify(name)}-{city_slug}"
 
 
-def parse_languages(raw, valid_codes):
+def parse_languages(raw, valid_codes, name_to_code):
     """
     'English, Spanish, Tagalog' → ['en','es','tl']
-    A part may be a mapped language name or a valid code as-is ('sr').
+    A part may be a table label, an alias, or a valid code as-is ('sr').
     Anything else is returned in `unknown`; the caller aborts on it.
     """
     if not raw:
@@ -164,7 +181,7 @@ def parse_languages(raw, valid_codes):
         p = p.strip(' .')
         if not p:
             continue
-        code = LANGUAGE_MAP.get(p) or (p if p in valid_codes else None)
+        code = name_to_code.get(p) or (p if p in valid_codes else None)
         if code is None:
             unknown.append(p)
         elif code not in codes:
@@ -192,9 +209,10 @@ def is_suspicious_website(url):
 
 
 # ---------------- Main ----------------
-def main(csv_path: str, dry_run: bool = False):
+def main(csv_path: str, dry_run: bool = False, merge_languages: bool = False):
+    mode = 'merge-languages' if merge_languages else 'insert-only (default)'
     sb_url, sb_key = load_env()
-    valid_codes = fetch_valid_language_codes(sb_url, sb_key)
+    valid_codes, name_to_code = fetch_language_lookup(sb_url, sb_key)
 
     cols = ['name','phone','website','street','city','consultant_name','rcic_number',
             'language','postal_code','address','category','subtypes','email',
@@ -213,15 +231,14 @@ def main(csv_path: str, dry_run: bool = False):
     skipped = []
     flagged_websites = []
     unknown_languages = []  # (business, consultant, rcic cell, raw value, bad parts)
-    parsed_consultants = []  # (rcic, name, city_slug, lang_codes) for --dry-run
+    # (rcic, name, city_slug, lang_codes, languages_attributed) for --dry-run
+    parsed_consultants = []
 
     # Output collectors
     business_inserts = []
     consultant_inserts = []
     join_inserts = []
 
-    # De-dupe: a business is one row per place_id; we may already have
-    # consultants from a previous batch, so use ON CONFLICT to be safe.
     seen_place_ids = set()
     # Track which RCICs we've already linked to a business in THIS batch.
     # When a consultant appears at multiple firms (e.g. one RCIC working at two
@@ -234,7 +251,7 @@ def main(csv_path: str, dry_run: bool = False):
     batch_insert = (
         f"insert into import_batches (id, source_label, imported_count, imported_by, notes)\n"
         f"  values ('{batch_id}', {sql_str(batch_label)}, {{COUNT}}, 'manual-cli', "
-        f"{sql_str('Generated by seed_from_csv.py')});"
+        f"{sql_str(f'Generated by seed_from_csv.py ({mode})')});"
     )
 
     consultant_count = 0
@@ -247,7 +264,7 @@ def main(csv_path: str, dry_run: bool = False):
             skipped.append((r.get('name'), 'no valid RCIC after parsing: ' + repr(rcic_raw)))
             continue
 
-        # ---- Business ----
+        # ---- Business (insert-only; existing businesses are left untouched) ----
         place_id = (r.get('place_id') or '').strip()
         city_raw = (r.get('city') or '').strip().lower()
         city_slug = CITY_MAP.get(city_raw)
@@ -287,14 +304,7 @@ insert into businesses (
     {sql_str(has_office)},
     {sql_str(place_id)}
 )
-on conflict (google_place_id) do update set
-    phone = excluded.phone,
-    website = excluded.website,
-    email = excluded.email,
-    address = excluded.address,
-    has_physical_office = excluded.has_physical_office,
-    updated_at = now()
-returning id;
+on conflict (google_place_id) do nothing;
 """.strip())
         elif place_id in seen_place_ids:
             # Same business already in this batch (shouldn't happen post-dedup but defensive)
@@ -310,17 +320,19 @@ returning id;
             skipped.append((r.get('name'), 'no consultant_name'))
             continue
 
-        lang_codes, unknown = parse_languages(r.get('language'), valid_codes)
+        lang_codes, unknown = parse_languages(r.get('language'), valid_codes, name_to_code)
         if unknown:
             unknown_languages.append(
                 (r.get('name'), full_name, rcic_raw, r.get('language'), unknown))
 
         # If the firm has multiple RCICs but one consultant_name, we can only
-        # confidently attribute the consultant_name to the first RCIC.
-        # The other RCICs get a placeholder name flagged for manual fix.
+        # confidently attribute the consultant_name (and the row's languages)
+        # to the first RCIC. The other RCICs get a placeholder name flagged for
+        # manual fix, and are never language-merged.
         for idx, rcic in enumerate(rcic_list):
             consultant_count += 1
-            if idx == 0:
+            attributed = idx == 0
+            if attributed:
                 cname = full_name
                 given = full_name.split()[0] if full_name else None
                 family = full_name.split()[-1] if len(full_name.split()) > 1 else None
@@ -331,9 +343,23 @@ returning id;
                 family = None
                 skipped.append((rcic, f'placeholder name; manual fill needed for {r.get("name")}'))
 
-            parsed_consultants.append((rcic, cname, city_slug, lang_codes))
+            parsed_consultants.append((rcic, cname, city_slug, lang_codes, attributed))
             slug = make_consultant_slug(cname, rcic)
             cid = str(uuid.uuid4())
+
+            if merge_languages and attributed:
+                # Union with the existing codes, keeping their order; skip the
+                # write entirely when the CSV adds nothing new. language_codes
+                # is nullable, hence the coalesce.
+                on_conflict = """on conflict (rcic_number) do update set
+    language_codes = coalesce(consultants.language_codes, '{}') || array(
+        select x from unnest(excluded.language_codes) as x
+        where not x = any(coalesce(consultants.language_codes, '{}'))
+    ),
+    updated_at = now()
+where not (excluded.language_codes <@ coalesce(consultants.language_codes, '{}'))"""
+            else:
+                on_conflict = "on conflict (rcic_number) do nothing"
 
             consultant_inserts.append(f"""
 insert into consultants (
@@ -356,12 +382,7 @@ insert into consultants (
     'draft',
     '{batch_id}'
 )
-on conflict (rcic_number) do update set
-    full_name = excluded.full_name,
-    language_codes = excluded.language_codes,
-    primary_city_slug = excluded.primary_city_slug,
-    updated_at = now()
-returning id;
+{on_conflict};
 """.strip())
 
             # Join row
@@ -369,7 +390,7 @@ returning id;
                 # is_primary only true if this is the FIRST business we link
                 # this consultant to in the batch AND it's the first RCIC of a
                 # multi-RCIC firm row.
-                is_primary_link = (idx == 0) and (rcic not in seen_rcic_primary)
+                is_primary_link = attributed and (rcic not in seen_rcic_primary)
                 if is_primary_link:
                     seen_rcic_primary.add(rcic)
 
@@ -393,9 +414,8 @@ on conflict (consultant_id, business_id) do nothing;
 
     # ---------------- Validate before emitting anything ----------------
     if unknown_languages:
-        print(f"ABORT: {len(unknown_languages)} row(s) have languages that are neither "
-              f"in LANGUAGE_MAP nor valid codes in the languages table. No SQL emitted.",
-              file=sys.stderr)
+        print(f"ABORT: {len(unknown_languages)} row(s) have languages that match no "
+              f"languages-table label, alias, or code. No SQL emitted.", file=sys.stderr)
         for biz, cname, rcic_cell, raw, bad in unknown_languages:
             print(f"  - {cname or '(no name)'} [{rcic_cell}] at {biz}: "
                   f"{', '.join(repr(b) for b in bad)}  (raw: {raw!r})", file=sys.stderr)
@@ -403,15 +423,16 @@ on conflict (consultant_id, business_id) do nothing;
             sys.exit(1)
 
     if dry_run:
-        # Still show the diff (unknown languages excluded) so the failures can
-        # be judged in context; exit non-zero if validation failed.
-        report_dry_run(sb_url, sb_key, parsed_consultants, len(business_inserts),
-                       seen_place_ids, skipped, flagged_websites)
+        # Still show the report (unknown languages excluded) so the failures
+        # can be judged in context; exit non-zero if validation failed.
+        report_dry_run(sb_url, sb_key, mode, merge_languages, parsed_consultants,
+                       len(business_inserts), seen_place_ids, skipped, flagged_websites)
         sys.exit(1 if unknown_languages else 0)
 
     # ---------------- Emit ----------------
     print("-- Generated by seed_from_csv.py")
     print(f"-- Source: {csv_path}")
+    print(f"-- Mode: {mode}")
     print(f"-- Consultants: {consultant_count}  Businesses: {len(business_inserts)}")
     print(f"-- Run AFTER migration_001_pre_import.sql\n")
     print("begin;\n")
@@ -434,6 +455,7 @@ on conflict (consultant_id, business_id) do nothing;
 
     # Stderr report
     print("\n=== IMPORT REPORT ===", file=sys.stderr)
+    print(f"Mode: {mode}", file=sys.stderr)
     print(f"Generated {consultant_count} consultant inserts across {len(business_inserts)} businesses.", file=sys.stderr)
 
     if flagged_websites:
@@ -447,12 +469,13 @@ on conflict (consultant_id, business_id) do nothing;
             print(f"  - {name}: {reason}", file=sys.stderr)
 
 
-def report_dry_run(url, key, parsed, business_count, place_ids, skipped, flagged):
+def report_dry_run(url, key, mode, merge_languages, parsed, business_count,
+                   place_ids, skipped, flagged):
     """Print what the import would change versus the live DB. Reads only."""
     existing = {
         c['rcic_number']: c
         for c in supabase_get(url, key, 'consultants', {
-            'select': 'rcic_number,full_name,primary_city_slug,language_codes,status'})
+            'select': 'rcic_number,full_name,language_codes,status'})
     }
     known_places = {
         b['google_place_id']
@@ -460,49 +483,43 @@ def report_dry_run(url, key, parsed, business_count, place_ids, skipped, flagged
         if b.get('google_place_id')
     }
 
-    # A consultant can appear on several rows; the last row wins in SQL.
-    final = {}
-    for rcic, name, city, langs in parsed:
-        final[rcic] = (name, city, langs)
-
-    new, changed, unchanged, removals = [], [], 0, 0
-    for rcic, (name, city, langs) in final.items():
+    # New consultants: the first row wins (later rows hit ON CONFLICT).
+    # Existing consultants: accumulate the CSV languages the merge would add,
+    # in statement order, from rows attributed to that RCIC only.
+    new, gains, existing_seen = {}, {}, set()
+    for rcic, name, city, langs, attributed in parsed:
         cur = existing.get(rcic)
         if cur is None:
-            new.append((rcic, name, city, langs))
+            new.setdefault(rcic, (name, city, langs))
             continue
-        cur_langs = cur.get('language_codes') or []
-        added = [l for l in langs if l not in cur_langs]
-        removed = [l for l in cur_langs if l not in langs]
-        diffs = []
-        if added:
-            diffs.append(f"languages +{added}")
-        if removed:
-            diffs.append(f"languages -{removed}")
-            removals += 1
-        if name != cur.get('full_name'):
-            diffs.append(f"full_name {cur.get('full_name')!r} -> {name!r}")
-        if city != cur.get('primary_city_slug'):
-            diffs.append(f"primary_city_slug {cur.get('primary_city_slug')!r} -> {city!r}")
-        if diffs:
-            changed.append((rcic, cur.get('full_name'), cur.get('status'), diffs))
-        else:
-            unchanged += 1
+        existing_seen.add(rcic)
+        if merge_languages and attributed:
+            have = list(cur.get('language_codes') or []) + gains.get(rcic, [])
+            added = [l for l in langs if l not in have]
+            if added:
+                gains.setdefault(rcic, []).extend(added)
+
+    new_places = [p for p in place_ids if p not in known_places]
 
     print("=== DRY RUN — no SQL emitted, nothing written ===")
-    print(f"Consultants in CSV: {len(final)} unique RCICs "
-          f"({len(new)} new, {len(changed)} changed, {unchanged} unchanged)")
-    print(f"Consultants whose languages would be REMOVED: {removals}")
-    new_places = [p for p in place_ids if p not in known_places]
-    print(f"Businesses in CSV: {business_count} ({len(new_places)} new place_ids)")
+    print(f"Mode: {mode}")
+    print(f"Consultants in CSV: {len(new) + len(existing_seen)} unique RCICs "
+          f"({len(new)} new, {len(existing_seen)} already in the database)")
+    print(f"Existing consultants that would be updated: {len(gains)} "
+          f"(languages added only; removals, full_name and primary_city_slug "
+          f"changes are never generated)")
+    print(f"Businesses in CSV: {business_count} "
+          f"({len(new_places)} new; existing businesses are never updated)")
 
-    if changed:
-        print(f"\nChanged ({len(changed)}):")
-        for rcic, name, status, diffs in sorted(changed):
-            print(f"  - {rcic} {name} [{status}]: " + "; ".join(diffs))
+    if gains:
+        print(f"\nWould gain languages ({len(gains)}):")
+        for rcic in sorted(gains):
+            cur = existing[rcic]
+            print(f"  - {rcic} {cur.get('full_name')} [{cur.get('status')}]: "
+                  f"+{gains[rcic]}  (now {cur.get('language_codes') or []})")
     if new:
         print(f"\nNew ({len(new)}):")
-        for rcic, name, city, langs in sorted(new):
+        for rcic, (name, city, langs) in sorted(new.items()):
             print(f"  - {rcic} {name} ({city}) languages={langs}")
     if flagged:
         print(f"\n{len(flagged)} suspicious websites:")
@@ -515,10 +532,12 @@ def report_dry_run(url, key, parsed, business_count, place_ids, skipped, flagged
 
 
 if __name__ == '__main__':
+    flags = {'--dry-run', '--merge-languages'}
     args = sys.argv[1:]
-    dry_run = '--dry-run' in args
-    args = [a for a in args if a != '--dry-run']
-    if len(args) != 1:
-        print("Usage: python3 seed_from_csv.py [--dry-run] <batch.csv>", file=sys.stderr)
+    unknown_flags = [a for a in args if a.startswith('--') and a not in flags]
+    paths = [a for a in args if not a.startswith('--')]
+    if unknown_flags or len(paths) != 1:
+        print("Usage: python3 seed_from_csv.py [--dry-run] [--merge-languages] <batch.csv>",
+              file=sys.stderr)
         sys.exit(1)
-    main(args[0], dry_run=dry_run)
+    main(paths[0], dry_run='--dry-run' in args, merge_languages='--merge-languages' in args)
