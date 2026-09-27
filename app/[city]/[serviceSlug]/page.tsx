@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -36,12 +36,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const actualServiceSlug = stripConsultantsSuffix(serviceSlug);
   if (!actualServiceSlug) return { title: "Page not found" };
 
-  const [cityRow, service, matchCount] = await Promise.all([
+  const [cityRow, service, services] = await Promise.all([
     getCity(city),
     getService(actualServiceSlug),
-    getServiceMatchCount(city, actualServiceSlug),
+    getFilterableServices(),
   ]);
   if (!cityRow || !service) return { title: "Page not found" };
+  // Non-filterable service: the page body redirects to the city hub.
+  if (!services.some((s) => s.slug === service.slug)) return {};
+
+  const matchCount = await getServiceMatchCount(city, actualServiceSlug);
 
   const title =
     substituteCity(service.seo_title, cityRow.name) ||
@@ -77,6 +81,11 @@ export default async function CityServicePage({ params }: Props) {
     getFilterableServices(),
   ]);
   if (!cityRow || !service) notFound();
+  // A real service that isn't offered as a filter (e.g. "general") has no page
+  // of its own; send it to the city hub. Unknown slugs still 404 above.
+  if (!services.some((s) => s.slug === service.slug)) {
+    permanentRedirect(`/${city}`);
+  }
 
   const filtered = await getConsultantsByCityAndService(city, actualServiceSlug);
   const isEmpty = filtered.consultants.length === 0;
