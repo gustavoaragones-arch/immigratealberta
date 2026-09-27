@@ -92,15 +92,37 @@ export const SERVICE_EDITORIAL: Record<string, ServiceEditorialContent> = {
 
   "edmonton:study-permit": {
     metaDescription:
-      "[PLACEHOLDER — 120-155 char meta description for search snippet.]",
+      "Study permit help in Edmonton from CICC-verified RCICs: PAL exemptions and diploma vs degree PGWP rules for U of A, MacEwan, NAIT and NorQuest.",
     intro:
-      "[PLACEHOLDER — 60-80 words. Similar to Calgary study-permit but reference Edmonton-specific angle.]",
+      "Edmonton's study permit questions often come down to which kind of program you choose. Degree-granting master's and doctoral programs at a public designated learning institution (DLI) no longer need a provincial attestation letter (PAL), but most undergraduate and diploma programs do, and graduate certificates and diplomas aren't covered by that exemption. The consultants below are verified against the CICC public register and can review your letter of acceptance, funding evidence and program choice before you apply.",
     whatToLookFor:
-      "[PLACEHOLDER — 100-150 words. Same 3-4 considerations, worded differently to avoid duplicate content flags.]",
+      "Ask how the consultant decides whether your program needs a PAL. The 2026 exemption covers only degree-granting master's and doctoral programs at a public institution; graduate certificates and diplomas aren't covered, and a prerequisite or bridging course still requires a PAL even when the main program is exempt. A good consultant checks this against your letter of acceptance, not the program's marketing name. Ask, too, how they plan beyond the permit itself. If you are considering a diploma at a college or polytechnic, the program's field of study must be on IRCC's eligible list for a post-graduation work permit (PGWP), and you will generally need CLB 5 in all four language skills; degree graduates need CLB 7 but are not subject to the field-of-study list. Be wary of promised approvals or guaranteed PALs. Your institution requests the PAL on your behalf once you're accepted, not a consultant.",
     cityContext:
-      "[PLACEHOLDER — 80-120 words on Edmonton-specific context: presence of U of A, MacEwan, NAIT, NorQuest as major DLIs; Edmonton's over-index of Hindi-speaking consultants (64 in DB) supporting Indian student community; Fort McMurray as secondary study destination for oil-sands trades programs.]",
+      "Edmonton's public institutions for international students include the University of Alberta, MacEwan University, NAIT and NorQuest College, so applicants here choose between research degrees, undergraduate programs and applied polytechnic or college diplomas. Those paths face different PAL, language and PGWP rules, which is why program choice deserves as much attention as the application itself. Alberta's 2026 allocation is 32,271 study permit applications requiring an attestation letter, shared among institutions across the province. Because institutions request letters from Alberta's allocation and spaces can run short later in the year, starting early in the intake cycle gives you the most room.",
     faqs: [
-      // 3 city-specific questions, non-overlapping with Calgary FAQs
+      {
+        question:
+          "I'm starting a master's at the University of Alberta. Do I need a PAL?",
+        answer:
+          "In most cases, no. Since January 1, 2026, applicants to degree-granting master's and doctoral programs at a public DLI don't need a PAL. You'll still need your letter of acceptance and the other required documents. Graduate certificates and diplomas aren't covered by this exemption, and a prerequisite course you must complete before the master's begins still requires a PAL, so confirm with the university which applies to you.",
+      },
+      {
+        question:
+          "Will a NAIT or NorQuest diploma qualify me for a post-graduation work permit?",
+        answer:
+          "It can, but two conditions apply that don't apply to degree graduates, in addition to the usual PGWP requirements. Your program's field of study must be on IRCC's eligible list, which IRCC has said will stay unchanged through 2026, and you'll generally need a language test result of at least CLB 5 in all four skills. Check your program's eligibility before you enroll, not when you graduate.",
+      },
+      {
+        question:
+          "I'm already studying in Edmonton and want to switch schools. Do I need a new PAL?",
+        answer:
+          "Usually, yes. Since January 22, 2025, changing schools or levels of study generally requires a new PAL when you apply to extend your study permit, unless an exception applies. You don't need one if you're extending at the same institution and the same level of study. Because the rules depend on your exact situation, have a consultant review your case before you accept a new offer.",
+      },
+      {
+        question: "Can a consultant get me a PAL faster?",
+        answer:
+          "No. Your institution requests the PAL on your behalf after accepting you, drawing on Alberta's allocation, and a consultant can't request or speed one up. What a consultant can do is make sure your study permit application is complete, your funding evidence is clear, and your program choice fits your longer-term plans, since a refusal can mean starting the process again.",
+      },
     ],
   },
 
