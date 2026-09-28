@@ -126,17 +126,42 @@ export const SERVICE_EDITORIAL: Record<string, ServiceEditorialContent> = {
     ],
   },
 
+  // REVIEW: contains time-sensitive facts. Re-check after each ESDC wage-threshold
+  // update (usually July; Alberta $37.50 as of 2026-07-17) and each quarterly
+  // refusal-to-process rate update for the Edmonton CMA.
   "edmonton:work-permit-lmia": {
     metaDescription:
-      "[PLACEHOLDER — 120-155 char meta description for search snippet.]",
+      "Edmonton work permit and LMIA help from CICC-verified RCICs: low-wage vs high-wage streams, Alberta's $37.50 threshold and fee red flags.",
     intro:
-      "[PLACEHOLDER — 60-80 words on work permits and LMIA, the difference between them, when each applies.]",
+      "Employer-specific work permits in Edmonton usually start with one question: does the job need a Labour Market Impact Assessment (LMIA), and if so, which stream? The answer depends largely on the wage. The consultants below are verified against the CICC public register and can advise workers and employers on LMIA-based and LMIA-exempt options, eligibility and timing. The employer pays the LMIA processing fee; it cannot be recovered from the worker.",
     whatToLookFor:
-      "[PLACEHOLDER — 100-150 words on 3-4 considerations: LMIA-exempt streams (CUSMA, ICT, IEC), employer compliance history, wage/prevailing wage documentation, provincial support letters.]",
+      "Ask the consultant which LMIA stream your job falls under and why. Since July 17, 2026, a position in Alberta paying $37.50 an hour or more goes through the high-wage stream; below that, it is low-wage. The wage must also meet the prevailing wage for the occupation, so raising pay only to change streams can lead to a negative LMIA decision. A good consultant confirms the actual work location, the occupation code and the wage before anything is filed. Watch for red flags. Employers and anyone recruiting for them may not charge you recruitment fees or pass on the $1,000 LMIA processing fee, and buying or selling a job offer is fraud. Workers still pay their own work permit and biometrics fees.",
     cityContext:
-      "[PLACEHOLDER — 80-120 words on Edmonton-specific context: healthcare and public sector as major LMIA employers, oil and gas sector (esp. Fort Mac corridor), skilled trades demand.]",
+      "Edmonton has been above the 6% unemployment threshold in recent quarterly updates. While a census metropolitan area is at or above that rate, low-wage LMIA applications for jobs there aren't processed. Certain sectors and positions are exempt, including qualifying positions in construction, food manufacturing, hospitals, and nursing and residential care facilities, but restaurants and other food-service positions are not part of the food manufacturing exemption. Rates are reviewed every three months, and the rate that applies is the one in effect when the employer submits the application. For an affected low-wage position, the employer may need to look at an applicable exemption, a high-wage position that genuinely meets the wage requirements, or an LMIA-exempt work-permit route.",
     faqs: [
-      // 3 city-specific questions
+      {
+        question:
+          "My employer in Edmonton wants to hire me through a low-wage LMIA. Can they?",
+        answer:
+          "Only if the position qualifies for an exemption, or Edmonton's unemployment rate falls below 6% in a quarterly update. While the rate is at or above 6%, low-wage LMIA applications for Edmonton jobs aren't processed unless an exemption applies. If none does, ask a consultant whether a high-wage offer that genuinely meets the wage requirements, an LMIA-exempt permit or another pathway fits your situation.",
+      },
+      {
+        question:
+          "Does the low-wage freeze apply to jobs just outside Edmonton?",
+        answer:
+          "It depends on the census area of the work location, not the employer's head office. The Edmonton census metropolitan area extends beyond city limits, so many nearby communities fall inside it. Locations in a smaller census agglomeration or outside any metropolitan area aren't subject to the 6% rule. A consultant can confirm the classification from the job's full postal code.",
+      },
+      {
+        question:
+          "Someone offered to sell me an LMIA job offer. Is that legitimate?",
+        answer:
+          "No. Employers must pay the LMIA processing fee themselves, and neither they nor anyone recruiting for them may charge you recruitment fees, directly or indirectly. Paying for a job offer or LMIA is fraud and can put your immigration future at risk. If you're asked to pay, stop and check the person's licence on the CICC public register before you do anything else.",
+      },
+      {
+        question: "Does an LMIA job offer still help with Express Entry?",
+        answer:
+          "Not with your ranking score. Since March 25, 2025, job offers, with or without an LMIA, add no Comprehensive Ranking System points. IRCC has said it may reintroduce points for some job offers, but no date or details have been announced. A job offer can still matter for program eligibility and for Alberta's provincial nominee streams, so it's worth discussing with a consultant.",
+      },
     ],
   },
 
