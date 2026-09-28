@@ -202,17 +202,42 @@ export const SERVICE_EDITORIAL: Record<string, ServiceEditorialContent> = {
     ],
   },
 
+  // REVIEW: time-sensitive. PGP intake paused 2026-07-15 "until further notice";
+  // super visa income rules changed 2026-03-31; LICO figures update annually.
+  // Copy states listed consultants "have offices in Red Deer" — keep true.
   "red-deer:visitor-super-visa": {
     metaDescription:
-      "[PLACEHOLDER — 120-155 char meta description for search snippet.]",
+      "Super visa and visitor visa help in Red Deer from CICC-verified RCICs: host income rules, $100,000 insurance, and local advice without the drive.",
     intro:
-      "[PLACEHOLDER — 60-80 words. Visitor visas vs Super Visa: the Super Visa is a 10-year multiple-entry visa specifically for parents/grandparents of Canadian citizens/PRs.]",
+      "In Red Deer, you don't have to travel to Calgary or Edmonton for visitor or super visa help. The consultants below have offices in Red Deer, are verified against the CICC public register and can review an invitation, a host's income evidence or an insurance policy before you apply. With new Parents and Grandparents Program intake currently paused, the super visa remains an option for families who want parents or grandparents to make longer visits.",
     whatToLookFor:
-      "[PLACEHOLDER — 100-150 words on 3-4 considerations: medical insurance requirements ($100k+ Canadian coverage), income requirements for the inviting family, letter of invitation composition, ties-to-home-country documentation.]",
+      "Ask the consultant which visa actually fits the visit. A visitor visa usually allows stays of up to six months, while a super visa lets eligible parents and grandparents stay up to five years per entry. For a super visa, ask how they check the host's income against the low-income cut-off for the household size, including the more flexible options IRCC introduced on March 31, 2026, and how they confirm the medical insurance qualifies: at least $100,000 in coverage, valid for at least one year from entry, from an eligible insurer. Incomplete invitation letters, inadequate insurance and poorly documented income can create problems for an application. Be wary of anyone who promises approval; the decision belongs to IRCC.",
     cityContext:
-      "[PLACEHOLDER — 80-120 words on Red Deer as a smaller market: consultants often serve broader Central Alberta region; fewer specialists but personalized service; typical Super Visa applicant profile in this region.]",
+      "For most visitor and super visa files, the core work is document review: the invitation letter, the host's notice of assessment and proof of status, and the insurance certificate. That makes a consultant close to home practical, especially for families preparing a super visa while new Parents and Grandparents Program intake is paused. The super visa income test uses the low-income cut-off itself, not the higher threshold used for sponsoring parents for permanent residence. In Red Deer, a local consultant can often review your documents in person before you submit.",
     faqs: [
-      // 3 city-specific questions
+      {
+        question:
+          "Can I get super visa help in Red Deer, or do I need to go to Calgary or Edmonton?",
+        answer:
+          "You can get help locally. The consultants listed on this page have offices in Red Deer and are verified against the CICC public register. Much of a super visa or visitor visa file is document review, so a local consultant can check your invitation letter, income evidence and insurance before you apply, without a trip to a larger city.",
+      },
+      {
+        question:
+          "How much income do I need to host my parents on a super visa?",
+        answer:
+          "It depends on your household size, which includes you, your family members and the parents or grandparents you're inviting. The requirement is the low-income cut-off for that household size, not the higher threshold used for sponsoring parents for permanent residence. Since March 31, 2026, hosts have more flexibility in which tax year they use and, in some cases, can count the visiting parent's income.",
+      },
+      {
+        question: "What insurance does a super visa need?",
+        answer:
+          "The policy must provide at least $100,000 in emergency medical coverage, be valid for at least one year from the date of entry, and cover health care, hospitalization and repatriation. It must come from a Canadian insurer or an eligible foreign insurer, and you need proof of it when you apply. A quote alone isn't accepted.",
+      },
+      {
+        question:
+          "I'm visiting Red Deer and found a job. Can I apply for a work permit from inside Canada?",
+        answer:
+          "Generally not as a visitor. The temporary policy that let visitors apply for an employer-supported work permit from inside Canada ended on August 28, 2024. Some other work permit applications can still be made in specific situations, so speak with a consultant before your authorized stay ends.",
+      },
     ],
   },
 };
