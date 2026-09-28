@@ -165,17 +165,40 @@ export const SERVICE_EDITORIAL: Record<string, ServiceEditorialContent> = {
     ],
   },
 
+  // REVIEW: time-sensitive. PGP intake paused 2026-07-15 "until further notice" —
+  // update this entry if IRCC reopens intake. Also re-check spousal processing
+  // wording if inland/outland relative times change.
   "edmonton:family-sponsorship": {
     metaDescription:
-      "[PLACEHOLDER — 120-155 char meta description for search snippet.]",
+      "Family sponsorship help in Edmonton from CICC-verified RCICs: spouse and partner applications, inland vs outland, and the 2026 parent program pause.",
     intro:
-      "[PLACEHOLDER — 60-80 words on family sponsorship: who can sponsor whom, spousal vs parents/grandparents distinction, common timeline expectations.]",
+      "For people in Edmonton looking to sponsor family members, current federal options include spouses, common-law partners and dependent children, while new Parents and Grandparents Program intake is paused. There is no minimum income requirement to sponsor a spouse or partner, but the relationship evidence has to hold up. The consultants below are verified against the CICC public register and can review your eligibility and your file before you apply.",
     whatToLookFor:
-      "[PLACEHOLDER — 100-150 words on 3-4 considerations: genuine relationship documentation, income requirements for PGP, in-Canada vs outside Canada sponsorship strategy, dealing with prior refusals.]",
+      "Ask how the consultant would decide between an inland and an outland application. Inland applications let an eligible spouse or partner already in Canada apply for an open work permit while waiting, but they have recently taken longer to process than outland ones, and outland applicants can travel more freely during processing. A good consultant weighs your spouse's status, work needs and travel plans before recommending one. Ask, too, how they assess relationship evidence, since doubts about whether a relationship is genuine are a frequent reason for refusal. Make sure you understand the undertaking you sign: you are financially responsible for a sponsored spouse or partner for three years after they become a permanent resident, and you must repay any social assistance they receive in that time.",
     cityContext:
-      "[PLACEHOLDER — 80-120 words on Edmonton-specific context.]",
+      "Sponsors living in Edmonton apply directly to IRCC; unlike Quebec, Alberta does not add a separate provincial undertaking. For parents and grandparents, IRCC is not accepting new interest-to-sponsor forms or issuing invitations until further notice, though applications already submitted are still being processed, with up to 15,000 approvals planned for 2026. For families in Edmonton who want parents or grandparents here for long visits in the meantime, the super visa is a separate option with its own requirements. Spousal processing times also change often, so check IRCC's current estimates rather than relying on older figures.",
     faqs: [
-      // 3 city-specific questions
+      {
+        question: "Can I sponsor my parents from Edmonton right now?",
+        answer:
+          "Not through the Parents and Grandparents Program for now. IRCC paused new intake on July 15, 2026 and hasn't announced a reopening date. If you already submitted an application, it continues to be processed. If your goal is to have a parent or grandparent stay with you for long periods, a consultant can assess whether the super visa fits your situation.",
+      },
+      {
+        question: "Do I need a minimum income to sponsor my spouse?",
+        answer:
+          "Generally, no. Sponsoring a spouse, common-law partner or dependent child doesn't require meeting a minimum income. You must still be eligible as a sponsor, which generally means you are not receiving social assistance for reasons other than disability, are not an undischarged bankrupt, and are not in default of a previous undertaking or immigration loan.",
+      },
+      {
+        question:
+          "My partner is already in Edmonton. Should we apply inland or outland?",
+        answer:
+          "It depends on what matters most to you. Inland lets your partner apply for an open work permit while the application is processed, which helps if they need to work. Outland has recently been faster and allows more freedom to travel, and it can be chosen even if your partner is in Canada. A consultant can weigh your partner's status and plans.",
+      },
+      {
+        question: "Who counts as a dependent child?",
+        answer:
+          "Generally, a child under 22 who doesn't have a spouse or common-law partner. Children 22 or older qualify only if they have depended on their parents financially since before 22 and can't support themselves because of a physical or mental condition. The undertaking lasts 10 years or until the child turns 25, whichever comes first, if the child is under 22 when they become a permanent resident. If they are 22 or older then, it lasts three years.",
+      },
     ],
   },
 
