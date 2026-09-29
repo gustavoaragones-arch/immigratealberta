@@ -4,6 +4,7 @@ export type ServiceEditorialFAQ = {
 };
 
 export type ServiceEditorialContent = {
+  lastReviewed: string; // "YYYY-MM" — shown as "Last reviewed: <Month YYYY>"
   metaDescription: string; // 120-155 chars, written for search snippet (Google truncates ~155)
   intro: string; // 60-80 words — what this service means, who it's for
   whatToLookFor: string; // 100-150 words — 3-4 practical considerations
@@ -29,6 +30,7 @@ export type ServiceEditorialContent = {
  */
 export const SERVICE_EDITORIAL: Record<string, ServiceEditorialContent> = {
   "calgary:pr-express-entry": {
+    lastReviewed: "2026-09",
     metaDescription:
       "Verified RCICs in Calgary who handle Express Entry — Federal Skilled Worker, CEC, category-based draws, and AAIP nomination. CICC-checked, no paid placements.",
     intro:
@@ -60,6 +62,7 @@ export const SERVICE_EDITORIAL: Record<string, ServiceEditorialContent> = {
   },
 
   "calgary:study-permit": {
+    lastReviewed: "2026-09",
     metaDescription:
       "Verified RCICs in Calgary who handle study permits — PAL, proof of funds, PGWP-eligible programs, and study-to-PR planning. CICC-checked, no paid placements.",
     intro:
@@ -91,6 +94,7 @@ export const SERVICE_EDITORIAL: Record<string, ServiceEditorialContent> = {
   },
 
   "edmonton:study-permit": {
+    lastReviewed: "2026-09",
     metaDescription:
       "Study permit help in Edmonton from CICC-verified RCICs: PAL exemptions and diploma vs degree PGWP rules for U of A, MacEwan, NAIT and NorQuest.",
     intro:
@@ -130,6 +134,7 @@ export const SERVICE_EDITORIAL: Record<string, ServiceEditorialContent> = {
   // update (usually July; Alberta $37.50 as of 2026-07-17) and each quarterly
   // refusal-to-process rate update for the Edmonton CMA.
   "edmonton:work-permit-lmia": {
+    lastReviewed: "2026-09",
     metaDescription:
       "Edmonton work permit and LMIA help from CICC-verified RCICs: low-wage vs high-wage streams, Alberta's $37.50 threshold and fee red flags.",
     intro:
@@ -169,6 +174,7 @@ export const SERVICE_EDITORIAL: Record<string, ServiceEditorialContent> = {
   // update this entry if IRCC reopens intake. Also re-check spousal processing
   // wording if inland/outland relative times change.
   "edmonton:family-sponsorship": {
+    lastReviewed: "2026-09",
     metaDescription:
       "Family sponsorship help in Edmonton from CICC-verified RCICs: spouse and partner applications, inland vs outland, and the 2026 parent program pause.",
     intro:
@@ -206,6 +212,7 @@ export const SERVICE_EDITORIAL: Record<string, ServiceEditorialContent> = {
   // super visa income rules changed 2026-03-31; LICO figures update annually.
   // Copy states listed consultants "have offices in Red Deer" — keep true.
   "red-deer:visitor-super-visa": {
+    lastReviewed: "2026-09",
     metaDescription:
       "Super visa and visitor visa help in Red Deer from CICC-verified RCICs: host income rules, $100,000 insurance, and local advice without the drive.",
     intro:
@@ -243,6 +250,7 @@ export const SERVICE_EDITORIAL: Record<string, ServiceEditorialContent> = {
 };
 
 const PLACEHOLDER_MARKER = "[PLACEHOLDER";
+const LAST_REVIEWED_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
 
 function isReady(e: ServiceEditorialContent): boolean {
   const fields = [
@@ -252,7 +260,10 @@ function isReady(e: ServiceEditorialContent): boolean {
     e.cityContext,
     ...e.faqs.flatMap((f) => [f.question, f.answer]),
   ];
-  return fields.every((f) => f.trim() !== "" && !f.includes(PLACEHOLDER_MARKER));
+  return (
+    LAST_REVIEWED_RE.test(e.lastReviewed) &&
+    fields.every((f) => f.trim() !== "" && !f.includes(PLACEHOLDER_MARKER))
+  );
 }
 
 /**

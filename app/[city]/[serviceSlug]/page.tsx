@@ -17,6 +17,7 @@ import { SERVICE_LABELS } from "@/lib/service-labels";
 import { getServiceEditorial } from "@/lib/service-editorial-content";
 import { ConsultantCard } from "@/components/consultant/consultant-card";
 import { ServiceFilterPills } from "@/components/city/service-filter-pills";
+import { EditorialDisclaimer } from "@/components/city/editorial-disclaimer";
 
 export async function generateStaticParams() {
   const combos = await getAllCityServiceCombos();
@@ -221,6 +222,8 @@ export default async function CityServicePage({ params }: Props) {
                 />
               </section>
             )}
+
+            <EditorialDisclaimer lastReviewed={editorial.lastReviewed} />
           </>
         )}
 
