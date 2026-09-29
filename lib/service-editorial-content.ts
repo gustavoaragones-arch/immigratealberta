@@ -18,8 +18,9 @@ export type ServiceEditorialContent = {
  *
  * IMPORTANT: adding content here without deploying = no effect.
  * Missing keys = page renders without editorial (default: no editorial section).
- * Any field still containing "[PLACEHOLDER" = whole entry is treated as not
- * ready and the page renders without editorial, so placeholders never ship.
+ * An entry that isn't ready (placeholder text, empty field, malformed
+ * lastReviewed) fails the build via assertAllEditorialReady(). At runtime it
+ * is also hidden, as a second safety net, so placeholders never ship.
  *
  * We deliberately only cover a subset of pages — the ones Google
  * explicitly rejected in the "Crawled - currently not indexed" report.
@@ -252,18 +253,50 @@ export const SERVICE_EDITORIAL: Record<string, ServiceEditorialContent> = {
 const PLACEHOLDER_MARKER = "[PLACEHOLDER";
 const LAST_REVIEWED_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
 
-function isReady(e: ServiceEditorialContent): boolean {
-  const fields = [
-    e.metaDescription,
-    e.intro,
-    e.whatToLookFor,
-    e.cityContext,
-    ...e.faqs.flatMap((f) => [f.question, f.answer]),
+/** Every reason an entry isn't ready, as "field: problem". Empty = ready. */
+function editorialProblems(e: ServiceEditorialContent): string[] {
+  const problems: string[] = [];
+  if (typeof e.lastReviewed !== "string" || !LAST_REVIEWED_RE.test(e.lastReviewed)) {
+    problems.push(`lastReviewed: expected "YYYY-MM", got ${JSON.stringify(e.lastReviewed)}`);
+  }
+  const fields: [string, string][] = [
+    ["metaDescription", e.metaDescription],
+    ["intro", e.intro],
+    ["whatToLookFor", e.whatToLookFor],
+    ["cityContext", e.cityContext],
+    ...e.faqs.flatMap((f, i): [string, string][] => [
+      [`faqs[${i}].question`, f.question],
+      [`faqs[${i}].answer`, f.answer],
+    ]),
   ];
-  return (
-    LAST_REVIEWED_RE.test(e.lastReviewed) &&
-    fields.every((f) => f.trim() !== "" && !f.includes(PLACEHOLDER_MARKER))
+  for (const [name, value] of fields) {
+    if (typeof value !== "string" || value.trim() === "") {
+      problems.push(`${name}: empty`);
+    } else if (value.includes(PLACEHOLDER_MARKER)) {
+      problems.push(`${name}: contains placeholder text`);
+    }
+  }
+  return problems;
+}
+
+function isReady(e: ServiceEditorialContent): boolean {
+  return editorialProblems(e).length === 0;
+}
+
+/**
+ * Throws if any entry isn't ready, naming each key and failing field.
+ * Called from the service route's generateStaticParams so `next build` fails
+ * instead of silently shipping a page without its editorial.
+ */
+export function assertAllEditorialReady(): void {
+  const failures = Object.entries(SERVICE_EDITORIAL).flatMap(([key, entry]) =>
+    editorialProblems(entry).map((problem) => `  - ${key} → ${problem}`),
   );
+  if (failures.length > 0) {
+    throw new Error(
+      `Editorial content not ready in lib/service-editorial-content.ts:\n${failures.join("\n")}`,
+    );
+  }
 }
 
 /**

@@ -14,12 +14,17 @@ import { substituteCity } from "@/lib/seo";
 import { canonical } from "@/lib/site";
 import { getLanguageCityCombos, LANGUAGE_LABELS } from "@/lib/language-filter";
 import { SERVICE_LABELS } from "@/lib/service-labels";
-import { getServiceEditorial } from "@/lib/service-editorial-content";
+import {
+  assertAllEditorialReady,
+  getServiceEditorial,
+} from "@/lib/service-editorial-content";
 import { ConsultantCard } from "@/components/consultant/consultant-card";
 import { ServiceFilterPills } from "@/components/city/service-filter-pills";
 import { EditorialDisclaimer } from "@/components/city/editorial-disclaimer";
 
 export async function generateStaticParams() {
+  // Fail the build, not just hide the section, if an editorial entry is broken.
+  assertAllEditorialReady();
   const combos = await getAllCityServiceCombos();
   return combos.map((c) => ({ city: c.city, serviceSlug: c.serviceUrlSlug }));
 }
